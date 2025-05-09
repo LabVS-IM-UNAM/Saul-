@@ -9,6 +9,7 @@ function App() {
     return (
         <div className="main-container">
             <h1>Juego de la Vida de Jhon Conway</h1>
+            <Grid grid ={sampleGrid} setGrid={() => {}}/>
         </div>
     )
 }
