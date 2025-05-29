@@ -66,3 +66,26 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.board {
+  width: fit-content;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.board .game {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  border: 1px solid;
+}
+
+.square.is-selected {
+  color: #fff;
+  background: #09F;
+}
