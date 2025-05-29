@@ -1,8 +1,17 @@
 import * as React from 'react';
-import Card from './components/Card';
+//import Card from './components/Card';
+import Card, {CardBody} from "./components/Card.jsx";
+import  List from './components/List';
+
 
 function App() {
-    return <Card/>;
+    const list = ['Goku','Tanjiro','Eren']
+    return (
+        <Card>
+            <CardBody title="Hola" text="Hola Mundo"/>
+            <List data={list}/>
+        </Card>
+    )
 }
 
 export default App;
