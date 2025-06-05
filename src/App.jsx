@@ -2,31 +2,41 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Card, { CardBody } from "./components/Card.jsx";
 import List from './components/List';
+import Boton from './components/Boton';
 import Grid from './components/Grid';
 
 function App() {
   const handleSelect = (elemento) => {
     console.log("Impirimiendo ", elemento);
   }
-  
+
   const list = ['Goku', 'Tanjiro', 'Eren'];
-  
+
   // Configuración para el Juego de la Vida
   const rows = 15;
   const cols = 15;
-  
+
   // Estado del grid (inicialmente todas las celdas están muertas)
   const [gridState, setGridState] = useState(
     Array(rows).fill().map(() => Array(cols).fill(false))
   );
-  
+
   // Función para cambiar el estado de una celda cuando se hace clic en ella
   const handleCellClick = (row, col) => {
     const newGridState = [...gridState];
     newGridState[row][col] = !newGridState[row][col]; // Cambiar estado (viva/muerta)
     setGridState(newGridState);
   };
-  
+
+  // Función para rellenar el grid con valores aleatorios
+  const handleRandom = () => {
+    setGridState(
+        Array(rows).fill().map(() =>
+            Array(cols).fill().map(() => Math.random() > 0.7)
+        )
+    );
+  }
+
   return (
     <div style = {{
       display: 'flex',
@@ -41,7 +51,7 @@ function App() {
         <List data={list} onSelect={handleSelect}/>
       </Card>
       */}
-      
+
       <Card>
         <CardBody
             title="Juego de la Vida"
@@ -49,11 +59,18 @@ function App() {
             text="Haz clic en las celdas para cambiar su estado"
         />
         <Grid
-          rows={rows} 
-          cols={cols} 
-          gridState={gridState} 
+          rows={rows}
+          cols={cols}
+          gridState={gridState}
           onCellClick={handleCellClick}
         />
+
+        <Boton
+          text = "Aleatorio"
+          color = "primary"
+          onClick = {handleRandom}
+        />
+
       </Card>
     </div>
   );
