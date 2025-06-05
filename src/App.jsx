@@ -12,8 +12,8 @@ function App() {
   const list = ['Goku', 'Tanjiro', 'Eren'];
   
   // Configuración para el Juego de la Vida
-  const rows = 10;
-  const cols = 10;
+  const rows = 15;
+  const cols = 15;
   
   // Estado del grid (inicialmente todas las celdas están muertas)
   const [gridState, setGridState] = useState(
