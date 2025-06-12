@@ -2,15 +2,25 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Card, { CardBody } from "./components/Card.jsx";
 import List from './components/List';
-import Grid from './components/Grid';
+import Boton from './components/Boton';
 
 function App() {
-  const handleSelect = elemento => {
-    console.log("Impirimiendo ", elemento);
-  }
+
+
+  const[isLoading,setIsLoading] = useState(false);
+
+  const handleClick = () => {
+    setIsLoading(!isLoading);
+    console.log(`className es btn btn-${isLoading ? 'primary' : 'secondary'}`);
+  };
+
   
   const list = ['Goku', 'Tanjiro', 'Eren'];
   const list_void = [];
+
+  const handleSelect = elemento => {
+    console.log("Impirimiendo ", elemento);
+  }
 
   // Se encargara almacenar la logica de que es lo que se renderiza o no 
   const contenido = list.length ?(<List data={list} onSelect={handleSelect}/> ):('Sin elementos');
@@ -29,8 +39,8 @@ function App() {
       <Card>
         <CardBody title="Hola Mundo" subtitle="Subtitulo"></CardBody>
         {contenido}
+        <Boton onClick={handleClick}> Hola mundo</Boton>
       </Card>
-      
     </div>
   );
 }
