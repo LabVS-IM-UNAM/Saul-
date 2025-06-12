@@ -5,13 +5,19 @@ import List from './components/List';
 import Grid from './components/Grid';
 
 function App() {
-  const handleSelect = (elemento) => {
+  const handleSelect = elemento => {
     console.log("Impirimiendo ", elemento);
   }
   
   const list = ['Goku', 'Tanjiro', 'Eren'];
   const list_void = [];
-  
+
+  // Se encargara almacenar la logica de que es lo que se renderiza o no 
+  const contenido = list.length ?(<List data={list} onSelect={handleSelect}/> ):('Sin elementos');
+
+  // Utilizas short circuit logical operators 
+  const contenido2 = list_void.length !== 0 && (<List data={list_void} onSelect={handleSelect}/>);
+        
   return (
     <div style = {{
       display: 'flex',
@@ -21,19 +27,8 @@ function App() {
       padding: '20px'
     }}>
       <Card>
-        {'' && 'string vacio'}
-        {undefined && 'indefinido'}
-        {null && 'nulo'}
-        {false && 'falso'}
-
-        {/* manera incorrecta */}
-        {list_void && 'lista vacia'}
-
-        {/* manera CORRECTA */}
-        {list_void.length !== 0 && 'mi lista'}
-
         <CardBody title="Hola Mundo" subtitle="Subtitulo"></CardBody>
-        <List data={list} onSelect={handleSelect}/>
+        {contenido}
       </Card>
       
     </div>
