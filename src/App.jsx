@@ -10,22 +10,7 @@ function App() {
   }
   
   const list = ['Goku', 'Tanjiro', 'Eren'];
-  
-  // Configuración para el Juego de la Vida
-  const rows = 10;
-  const cols = 10;
-  
-  // Estado del grid (inicialmente todas las celdas están muertas)
-  const [gridState, setGridState] = useState(
-    Array(rows).fill().map(() => Array(cols).fill(false))
-  );
-  
-  // Función para cambiar el estado de una celda cuando se hace clic en ella
-  const handleCellClick = (row, col) => {
-    const newGridState = [...gridState];
-    newGridState[row][col] = !newGridState[row][col]; // Cambiar estado (viva/muerta)
-    setGridState(newGridState);
-  };
+  const list_void = [];
   
   return (
     <div style = {{
@@ -35,26 +20,22 @@ function App() {
       minHeight: '100vh',
       padding: '20px'
     }}>
-      {/*
       <Card>
-        <CardBody title="Hola" text="Hola Mundo"/>
+        {'' && 'string vacio'}
+        {undefined && 'indefinido'}
+        {null && 'nulo'}
+        {false && 'falso'}
+
+        {/* manera incorrecta */}
+        {list_void && 'lista vacia'}
+
+        {/* manera CORRECTA */}
+        {list_void.length !== 0 && 'mi lista'}
+
+        <CardBody title="Hola Mundo" subtitle="Subtitulo"></CardBody>
         <List data={list} onSelect={handleSelect}/>
       </Card>
-      */}
       
-      <Card>
-        <CardBody
-            title="Juego de la Vida"
-            subtitle="de Jhon Conway"
-            text="Haz clic en las celdas para cambiar su estado"
-        />
-        <Grid
-          rows={rows} 
-          cols={cols} 
-          gridState={gridState} 
-          onCellClick={handleCellClick}
-        />
-      </Card>
     </div>
   );
 }
