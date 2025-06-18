@@ -8,7 +8,7 @@ function Boton(Props) {
       onClick={onClick}
       disabled={isLoading}
       type="button"
-      className={`btn btn-${isLoading ? "Secondary" : "primary"}`}
+      className={`btn btn-${isLoading ? "secondary" : "primary"}`}
     >
       {isLoading ? "Cargando..." : children}
     </button>
@@ -16,4 +16,3 @@ function Boton(Props) {
 }
 
 export default Boton;
-/*button type="button" class="btn btn-secondary">Secondary</button>*/

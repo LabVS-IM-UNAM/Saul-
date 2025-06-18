@@ -5,18 +5,20 @@ import List from "./components/List";
 import Boton from "./components/Boton";
 
 function App() {
+  //const list = ["Goku", "Tanjiro", "Eren"];
   const [isLoading, setIsLoading] = useState(false);
+  const [list, setList] = useState(["Goku", "Tanjiro", "Eren"]);
 
   const handleClick = () => setIsLoading(!isLoading);
-  /*
-  const handlerClick = () => {
-    console.log("El estado anterior es:  ", isLoading);
-    setIsLoading(!isLoading);
-    console.log("Cambiando el estado de isLoading a ", !isLoading);
-  };*/
 
-  const list = ["Goku", "Tanjiro", "Eren"];
-  const list_void = [];
+  //add and pop
+  const handleAdd = () => {
+    setList((prevList) => [...prevList, `Minion ${prevList.length + 1}`]);
+  };
+
+  const handlePop = () => {
+    setList((prevList) => prevList.slice(0, -1));
+  };
 
   const handleSelect = (elemento) => {
     console.log("Impirimiendo ", elemento);
@@ -27,11 +29,6 @@ function App() {
     <List data={list} onSelect={handleSelect} />
   ) : (
     "Sin elementos"
-  );
-
-  // Utilizas short circuit logical operators
-  const contenido2 = list_void.length !== 0 && (
-    <List data={list_void} onSelect={handleSelect} />
   );
 
   return (
@@ -46,12 +43,13 @@ function App() {
     >
       <Card>
         <CardBody title="Hola Mundo" subtitle="Subtitulo"></CardBody>
-        {contenido}
+        <Boton onClick={handleAdd} children="Agregar"></Boton>
         <Boton
-          onClick={handleClick}
-          isLoading={isLoading}
-          children="Hola boton"
+          onClick={handlePop}
+          isLoading={list.length === 0}
+          children="Pop"
         ></Boton>
+        {contenido}
       </Card>
     </div>
   );
