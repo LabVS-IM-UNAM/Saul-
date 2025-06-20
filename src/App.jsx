@@ -10,7 +10,7 @@ import Card, {CardBody} from './components/Card.jsx';
 
 function App() {
   const cols = 8;
-  const rows = 3;
+  const rows = 4;
   const [grid,setGrid]=useState(Array(rows).fill().map(() => Array(cols).fill(0)));
 
   // =========== States ===========
@@ -26,14 +26,14 @@ function App() {
   // Creamos el sintetizador solo una vez, en el montaje del componente
   
   useEffect(() => {
-    synthsRef.current = Array(rows).fill().map(() => new Tone.Synth({oscilator: {type:'sine'},envelope:{attack: 0.01, decay: 0.1, sustain: 0.4, release: 0.61 }}).toDestination());
+    synthsRef.current = Array(rows).fill().map(() => new Tone.Synth({oscilator: {type:'square'},envelope:{attack: 0.01, decay: 0.1, sustain: 0.4, release: 0.61 }}).toDestination());
 
     sequenceRef.current = new Tone.Sequence((time, stepIndex) => {
       for (let row = 0; row < rows; row++) {
         if (grid[row][stepIndex] === 1) {
           // Cada fila con su nota e instrumento
-          const note = ["C4", "E4", "G4"][row]; // asigna notas diferentes
-          synthsRef.current[row].triggerAttackRelease(note, "8n", time);
+          const note = ["C4", "E4", "G4","F4"][row]; // asigna notas diferentes
+          synthsRef.current[row].triggerAttackRelease(note, "16n", time);
         }
       }
     }, [...Array(cols).keys()], "8n");
@@ -81,7 +81,7 @@ function App() {
 
   return (
     <Card>
-      <CardBody title="Hola mundo" subtitle="Sonidos con Tone.js" text = "Pulsa el boton para escuchar la nota C4"></CardBody>
+      <CardBody title="Prueba de secuenciador" subtitle="Sonidos con Tone.js" text = "Pulsa el boton para escuchar C4, E4, G4 en el secuenciador"></CardBody>
       <Grid grid={grid} setGrid={setGrid} />
     <Boton onClick={handleStartStop} isLoading={false} children="Hola Mundo">{isPlaying ? "Detener":"Reproducir"}</Boton>
 
