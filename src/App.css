@@ -1,19 +1,100 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Abre tu archivo App.css y usa estos estilos */
+
+/* NUEVO: Contenedor principal de la aplicación.
+   Le damos un ancho máximo más grande para que el grid pueda crecer. */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Mejora el manejo de anchos y paddings */
+}
+/* Le damos un color de fondo a toda la página para un look más cohesivo */
+body {
+  background-color: #282c34; /* Un gris oscuro, común en apps de música */
+  color: white; /* Hacemos que el texto por defecto sea blanco */
+  font-family: sans-serif;
 }
 
-.card {
-  width: 80%;
-  max-width: 500px; /* Un ancho máximo para escritorio */
-  margin: 20px auto;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  box-sizing: border-box;
-  text-align: center; /* Centrar texto y botón */
-  background-color: white; /* Asumiendo que es blanca */
-  text-align:center;
+/* Hacemos que todos los elementos hereden el box-sizing */
+*, *:before, *:after {
+  box-sizing: inherit;
 }
+
+.app-container {
+  max-width: 800px; /* ANTES: No estaba definido, AHORA: 800px. Aumenta este valor si lo quieres más ancho. */
+  margin: 2rem auto; /* Centra la aplicación en la página con un margen */
+  padding: 1rem;
+}
+
+/* Contenedor principal del Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  border: 1px solid #ccc;
+  /* CAMBIO: Bordes menos redondeados */
+  border-radius: 1px; /* ANTES: 8px, AHORA: 4px. Pon 0px si quieres esquinas perfectas. */
+  padding: 5px;
+  /* CAMBIO: Un poco más de espacio entre las celdas */
+  gap: 2px; /* ANTES: 5px, AHORA: 8px */
+  margin: 10px 0;
+  background-color: #f9f9f9;
+}
+
+/* Estilo para cada celda individual */
+.grid-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #e0e0e0;
+  border: 1px solid #dcdcdc;
+  /* CAMBIO: También reducimos el borde de las celdas para que coincida */
+  border-radius: 2px; /* ANTES: 4px, AHORA: 2px */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.grid-cell:hover {
+  background-color: #c8c8c8;
+}
+
+
+/* --- Estilos para la tarjeta de controles y celdas activas (sin cambios) --- */
+
+.controls-card {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.control-group label {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+.control-group select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.grid-cell.active {
+  border-color: #333;
+}
+
+.grid-cell.active.instrument-Synth { background-color: #3498db; }
+.grid-cell.active.instrument-AMSynth { background-color: #e74c3c; }
+.grid-cell.active.instrument-FMSynth { background-color: #2ecc71; }
+.grid-cell.active.instrument-PluckSynth { background-color: #f1c40f; }
+.grid-cell.active.instrument-Bass { background-color: #9b59b6; } /* Morado para el bajo */
+.grid-cell.active.instrument-Lead { background-color: #e67e22; } /* Naranja para el lead */
+.grid-cell.active.instrument-Pad { background-color: #1abc9c; } /* Turquesa para el pad */
+.grid-cell.active.instrument-DrumKit { background-color: #ecf0f1; border-color: #95a5a6; } /* Gris claro para la batería */
