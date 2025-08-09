@@ -8,9 +8,6 @@ import Boton from './components/Boton';
 import Card, { CardBody } from './components/Card.jsx';
 
 // --- Constantes de Configuración ---
-const COLS = 16;
-const ROWS = 8;
-
 const INSTRUMENT_NAMES = ['Synth', 'AMSynth', 'FMSynth', 'Oscilador'];
 
 const POLYSYNTH_INSTRUMENTS = {
@@ -26,58 +23,81 @@ const SCALES = {
   'Cromática': ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4"],
 };
 
-// Función para crear un grid vacío
-const createEmptyGrid = () => Array(ROWS).fill().map(() => Array(COLS).fill(null));
+// --- Funciones Auxiliares ---
+
+// Función para crear un grid vacío con dimensiones dinámicas
+const createEmptyGrid = (rows, cols) => Array(rows).fill().map(() => Array(cols).fill(null));
 
 // Función para contar vecinos con topología toroidal (sin fronteras)
-// Las células vivas son aquellas que tienen un instrumento asignado (no null)
-const countNeighbors = (grid, x, y) => {
+const countNeighbors = (grid, x, y, rows, cols) => {
   let count = 0;
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       if (i === 0 && j === 0) continue;
-      
-      // Calcular coordenadas con wrapping (topología toroidal)
-      const row = (x + i + ROWS) % ROWS;
-      const col = (y + j + COLS) % COLS;
-      
-      // Célula está viva si tiene un instrumento asignado
-      if (grid[row][col] !== null) count++;
+
+      const row = (x + i + rows) % rows;
+      const col = (y + j + cols) % cols;
+
+      if (grid[row] && grid[row][col] !== null) {
+        count++;
+      }
     }
   }
   return count;
 };
 
 // Función para calcular la siguiente generación del Juego de la Vida
-// Mantiene los instrumentos asignados pero aplica las reglas de vida/muerte
-const nextGeneration = (grid) => {
-  const newGrid = createEmptyGrid();
-  
-  for (let row = 0; row < ROWS; row++) {
-    for (let col = 0; col < COLS; col++) {
-      const neighbors = countNeighbors(grid, row, col);
+const nextGeneration = (grid, rows, cols) => {
+  const newGrid = createEmptyGrid(rows, cols);
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const neighbors = countNeighbors(grid, row, col, rows, cols);
       const currentInstrument = grid[row][col];
       const isAlive = currentInstrument !== null;
-      
-      // Reglas del Juego de la Vida
+
       if (isAlive && (neighbors === 2 || neighbors === 3)) {
-        // Célula viva se mantiene viva con el mismo instrumento
         newGrid[row][col] = currentInstrument;
       } else if (!isAlive && neighbors === 3) {
-        // Célula muerta nace con un instrumento aleatorio
         const randomInstrument = INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
         newGrid[row][col] = randomInstrument;
       }
-      // En cualquier otro caso, la célula muere (se queda null)
     }
   }
-  
+
   return newGrid;
 };
 
+// Función para generar una escala extendida a través de múltiples octavas
+const generateScaleNotes = (baseScale, totalRows) => {
+  const extendedScale = [];
+  const baseLength = baseScale.length;
+  if (baseLength === 0) return [];
+
+  for (let i = 0; i < totalRows; i++) {
+    const baseNote = baseScale[i % baseLength];
+    const octaveOffset = Math.floor(i / baseLength);
+
+    // Separa el nombre de la nota de la octava
+    const noteParts = baseNote.match(/([A-Ga-g]#?b?)([0-9]+)/);
+    if (noteParts) {
+      const noteName = noteParts[1];
+      const baseOctave = parseInt(noteParts[2], 10);
+      const newOctave = baseOctave + octaveOffset;
+      extendedScale.push(`${noteName}${newOctave}`);
+    } else {
+      extendedScale.push(baseNote); // Fallback si no tiene octava
+    }
+  }
+  return extendedScale;
+};
+
 function App() {
-  // Grid único que combina instrumentos y células vivas del Juego de la Vida
-  const [grid, setGrid] = useState(createEmptyGrid());
+  // Estado para dimensiones del grid
+  const [numRows, setNumRows] = useState(8);
+  const [numCols, setNumCols] = useState(16);
+
+  const [grid, setGrid] = useState(() => createEmptyGrid(numRows, numCols));
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeInstrument, setActiveInstrument] = useState('Synth');
   const [activeScale, setActiveScale] = useState('Mayor');
@@ -90,6 +110,12 @@ function App() {
     gridRef.current = grid;
   }, [grid]);
 
+  // Efecto para reiniciar el grid cuando las dimensiones cambian
+  useEffect(() => {
+    setGrid(createEmptyGrid(numRows, numCols));
+  }, [numRows, numCols]);
+
+  // Efecto principal para configurar y controlar Tone.js
   useEffect(() => {
     synthsRef.current = {
       'Synth': POLYSYNTH_INSTRUMENTS['Synth'](),
@@ -97,25 +123,24 @@ function App() {
       'FMSynth': POLYSYNTH_INSTRUMENTS['FMSynth'](),
     };
 
+    const currentScaleNotes = generateScaleNotes(SCALES[activeScale], numRows);
+
     sequenceRef.current = new Tone.Sequence((time, stepIndex) => {
-      // Actualizar el Juego de la Vida en cada paso del secuenciador
-      if (stepIndex === 0) { // Solo actualizar al inicio de cada ciclo completo
-        setGrid(currentGrid => nextGeneration(currentGrid));
+      if (stepIndex === 0) {
+        setGrid(currentGrid => nextGeneration(currentGrid, numRows, numCols));
       }
 
       const currentGrid = gridRef.current;
-      const currentScaleNotes = SCALES[activeScale];
 
-      for (let row = 0; row < ROWS; row++) {
-        // Solo reproducir sonido si hay un instrumento asignado (célula viva)
+      for (let row = 0; row < numRows; row++) {
         const instrument = currentGrid[row][stepIndex];
-        
-        if (instrument && instrument !== 'Oscilador') {
+
+        if (instrument && instrument !== 'Oscilador' && currentScaleNotes[row]) {
           const note = currentScaleNotes[row];
           synthsRef.current[instrument]?.triggerAttackRelease(note, "8n", time);
         }
       }
-    }, [...Array(COLS).keys()], "8n").start(0);
+    }, [...Array(numCols).keys()], "8n").start(0);
 
     if (Tone.Transport.state === "started") {
       Tone.Transport.stop();
@@ -126,10 +151,9 @@ function App() {
       sequenceRef.current?.dispose();
       Object.values(synthsRef.current ?? {}).forEach(synth => synth.dispose());
     };
-  }, [activeScale]);
+  }, [activeScale, numRows, numCols]); // <- Dependencias actualizadas
 
   const handleStartStop = async () => {
-    // La advertencia sobre "AudioContext" se soluciona aquí, al hacer clic en el botón.
     await Tone.start();
     if (isPlaying) {
       Tone.Transport.stop();
@@ -141,20 +165,19 @@ function App() {
   };
 
   const handleCellClick = (row, col) => {
-    // Click para asignar/quitar instrumento (y por tanto célula viva/muerta)
     const newGrid = grid.map(r => [...r]);
     newGrid[row][col] = newGrid[row][col] === activeInstrument ? null : activeInstrument;
     setGrid(newGrid);
   };
 
   const clearGrid = () => {
-    setGrid(createEmptyGrid());
+    setGrid(createEmptyGrid(numRows, numCols));
   };
 
   const randomizeGrid = () => {
-    const newGrid = createEmptyGrid();
-    for (let row = 0; row < ROWS; row++) {
-      for (let col = 0; col < COLS; col++) {
+    const newGrid = createEmptyGrid(numRows, numCols);
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
         if (Math.random() > 0.7) {
           const randomInstrument = INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
           newGrid[row][col] = randomInstrument;
@@ -164,10 +187,20 @@ function App() {
     setGrid(newGrid);
   };
 
+  const handleDimensionChange = (setter) => (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0) {
+      setter(value);
+    }
+  };
+  const gridStyles = {
+    gridTemplateColumns: `repeat(${numCols}, 1fr)`,
+    gap: '2px' // También podemos mover 'gap' aquí si queremos que sea dinámico
+  };
   return (
       <div className="app-container">
         <Card>
-          <CardBody title="Juego de la Vida" subtitle="Sintetizador + el juego de la vida" />
+          <CardBody title="Juego de la Vida Musical" subtitle="Sintetizador generativo" />
 
           <div className="controls-card">
             <div className="control-group">
@@ -196,21 +229,43 @@ function App() {
             </div>
           </div>
 
+          {/* --- NUEVOS INPUTS PARA FILAS Y COLUMNAS --- */}
+          <div className="controls-card">
+            <div className="control-group">
+              <label htmlFor="rows-input">Filas (Notas):</label>
+              <input
+                  id="rows-input"
+                  type="number"
+                  value={numRows}
+                  onChange={handleDimensionChange(setNumRows)}
+                  min="1"
+                  style={{width: '60px'}}
+              />
+            </div>
+            <div className="control-group">
+              <label htmlFor="cols-input">Columnas (Pasos):</label>
+              <input
+                  id="cols-input"
+                  type="number"
+                  value={numCols}
+                  onChange={handleDimensionChange(setNumCols)}
+                  min="1"
+                  style={{width: '60px'}}
+              />
+            </div>
+          </div>
+
           <div style={{ marginBottom: '20px' }}>
             <h3>Juego de la Vida</h3>
             <p style={{ fontSize: '14px', color: '#666' }}>
-              Click para asignar instrumentos. Las células con instrumentos están "vivas" y evolucionan según las reglas del Juego de la Vida.
+              Click para asignar instrumentos. Las células "vivas" evolucionan y generan música.
             </p>
-            <Grid grid={grid} onCellClick={handleCellClick} />
+            <Grid grid={grid} onCellClick={handleCellClick} style={gridStyles} />
           </div>
 
           <div className="controls-card">
-            <Boton onClick={clearGrid} isLoading={false}>
-              Limpiar
-            </Boton>
-            <Boton onClick={randomizeGrid} isLoading={false}>
-              Aleatorio
-            </Boton>
+            <Boton onClick={clearGrid} isLoading={false}>Limpiar</Boton>
+            <Boton onClick={randomizeGrid} isLoading={false}>Aleatorio</Boton>
             <Boton onClick={handleStartStop} isLoading={false}>
               {isPlaying ? "Detener" : "Reproducir"}
             </Boton>

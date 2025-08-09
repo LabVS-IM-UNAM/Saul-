@@ -30,7 +30,7 @@ body {
 /* Contenedor principal del Grid */
 .grid {
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
+  /* grid-template-columns: repeat(16, 1fr);*/
   border: 1px solid #ccc;
   /* CAMBIO: Bordes menos redondeados */
   border-radius: 1px; /* ANTES: 8px, AHORA: 4px. Pon 0px si quieres esquinas perfectas. */
