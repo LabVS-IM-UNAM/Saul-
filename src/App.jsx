@@ -8,7 +8,7 @@ import Boton from './components/Boton';
 import Card, { CardBody } from './components/Card.jsx';
 
 // --- Constantes de Configuración ---
-const INSTRUMENT_NAMES = ['Synth', 'AMSynth', 'FMSynth', 'Oscilador'];
+const INSTRUMENT_NAMES = ['Synth', 'AMSynth', 'FMSynth' ];
 
 const POLYSYNTH_INSTRUMENTS = {
   'Synth': () => new Tone.PolySynth(Tone.Synth).toDestination(),
@@ -101,10 +101,15 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeInstrument, setActiveInstrument] = useState('Synth');
   const [activeScale, setActiveScale] = useState('Mayor');
+  const [bpm,setBpm]= useState(120);
 
   const synthsRef = useRef(null);
   const sequenceRef = useRef(null);
   const gridRef = useRef(grid);
+
+  useEffect(() => {
+    Tone.Transport.bpm.value = bpm;
+  }, [bpm]);
 
   useEffect(() => {
     gridRef.current = grid;
@@ -228,8 +233,6 @@ function App() {
               </select>
             </div>
           </div>
-
-          {/* --- NUEVOS INPUTS PARA FILAS Y COLUMNAS --- */}
           <div className="controls-card">
             <div className="control-group">
               <label htmlFor="rows-input">Filas (Notas):</label>
@@ -251,6 +254,19 @@ function App() {
                   onChange={handleDimensionChange(setNumCols)}
                   min="1"
                   style={{width: '60px'}}
+              />
+            </div>
+            {/* Nuevo input */}
+            <div className="control-group">
+              <label htmlFor="bpm-slider">Velocidad: {bpm} BPM</label>
+              <input
+                  id="bpm-slider"
+                  type="range"
+                  min="40"
+                  max="240"
+                  value={bpm}
+                  onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+                  style={{width: '100px'}}
               />
             </div>
           </div>
