@@ -98,3 +98,19 @@ body {
 .grid-cell.active.instrument-Lead { background-color: #e67e22; } /* Naranja para el lead */
 .grid-cell.active.instrument-Pad { background-color: #1abc9c; } /* Turquesa para el pad */
 .grid-cell.active.instrument-DrumKit { background-color: #ecf0f1; border-color: #95a5a6; } /* Gris claro para la batería */
+
+
+.grid-cell.active-step {
+  border: 2px solid gold;
+  box-shadow: 0 0 6px gold;
+}
+
+.grid-cell.active.instrument-Synth {
+  background-color: #4cafef;
+}
+.grid-cell.active.instrument-AMSynth {
+  background-color: #8bc34a;
+}
+.grid-cell.active.instrument-FMSynth {
+  background-color: #ff9800;
+}

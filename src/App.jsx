@@ -1,32 +1,35 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
-import './App.css';
+import "./App.css";
 
 // Componentes
-import Grid from './components/Grid';
-import Boton from './components/Boton';
-import Card, { CardBody } from './components/Card.jsx';
+import Grid from "./components/Grid";
+import Boton from "./components/Boton";
+import Card, { CardBody } from "./components/Card.jsx";
 
 // --- Constantes de Configuración ---
-const INSTRUMENT_NAMES = ['Synth', 'AMSynth', 'FMSynth' ];
+const INSTRUMENT_NAMES = ["Synth", "AMSynth", "FMSynth"];
 
 const POLYSYNTH_INSTRUMENTS = {
-  'Synth': () => new Tone.PolySynth(Tone.Synth).toDestination(),
-  'AMSynth': () => new Tone.PolySynth(Tone.AMSynth).toDestination(),
-  'FMSynth': () => new Tone.PolySynth(Tone.FMSynth).toDestination(),
+  Synth: () => new Tone.PolySynth(Tone.Synth).toDestination(),
+  AMSynth: () => new Tone.PolySynth(Tone.AMSynth).toDestination(),
+  FMSynth: () => new Tone.PolySynth(Tone.FMSynth).toDestination(),
 };
 
 const SCALES = {
-  'Mayor': ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"],
-  'Menor': ["C4", "D4", "Eb4", "F4", "G4", "Ab4", "Bb4", "C5"],
-  'Pentatónica': ["C4", "Eb4", "F4", "G4", "Bb4", "C5", "Eb5", "F5"],
-  'Cromática': ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4"],
+  Mayor: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"],
+  Menor: ["C4", "D4", "Eb4", "F4", "G4", "Ab4", "Bb4", "C5"],
+  Pentatónica: ["C4", "Eb4", "F4", "G4", "Bb4", "C5", "Eb5", "F5"],
+  Cromática: ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4"],
 };
 
 // --- Funciones Auxiliares ---
 
 // Función para crear un grid vacío con dimensiones dinámicas
-const createEmptyGrid = (rows, cols) => Array(rows).fill().map(() => Array(cols).fill(null));
+const createEmptyGrid = (rows, cols) =>
+  Array(rows)
+    .fill()
+    .map(() => Array(cols).fill(null));
 
 // Función para contar vecinos con topología toroidal (sin fronteras)
 const countNeighbors = (grid, x, y, rows, cols) => {
@@ -59,7 +62,8 @@ const nextGeneration = (grid, rows, cols) => {
       if (isAlive && (neighbors === 2 || neighbors === 3)) {
         newGrid[row][col] = currentInstrument;
       } else if (!isAlive && neighbors === 3) {
-        const randomInstrument = INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
+        const randomInstrument =
+          INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
         newGrid[row][col] = randomInstrument;
       }
     }
@@ -99,9 +103,11 @@ function App() {
 
   const [grid, setGrid] = useState(() => createEmptyGrid(numRows, numCols));
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeInstrument, setActiveInstrument] = useState('Synth');
-  const [activeScale, setActiveScale] = useState('Mayor');
-  const [bpm,setBpm]= useState(120);
+  const [activeInstrument, setActiveInstrument] = useState("Synth");
+  const [activeScale, setActiveScale] = useState("Mayor");
+  const [bpm, setBpm] = useState(120);
+
+  const [currentStep, setCurrentStep] = useState(0);
 
   const synthsRef = useRef(null);
   const sequenceRef = useRef(null);
@@ -123,29 +129,44 @@ function App() {
   // Efecto principal para configurar y controlar Tone.js
   useEffect(() => {
     synthsRef.current = {
-      'Synth': POLYSYNTH_INSTRUMENTS['Synth'](),
-      'AMSynth': POLYSYNTH_INSTRUMENTS['AMSynth'](),
-      'FMSynth': POLYSYNTH_INSTRUMENTS['FMSynth'](),
+      Synth: POLYSYNTH_INSTRUMENTS["Synth"](),
+      AMSynth: POLYSYNTH_INSTRUMENTS["AMSynth"](),
+      FMSynth: POLYSYNTH_INSTRUMENTS["FMSynth"](),
     };
 
     const currentScaleNotes = generateScaleNotes(SCALES[activeScale], numRows);
 
-    sequenceRef.current = new Tone.Sequence((time, stepIndex) => {
-      if (stepIndex === 0) {
-        setGrid(currentGrid => nextGeneration(currentGrid, numRows, numCols));
-      }
-
-      const currentGrid = gridRef.current;
-
-      for (let row = 0; row < numRows; row++) {
-        const instrument = currentGrid[row][stepIndex];
-
-        if (instrument && instrument !== 'Oscilador' && currentScaleNotes[row]) {
-          const note = currentScaleNotes[row];
-          synthsRef.current[instrument]?.triggerAttackRelease(note, "8n", time);
+    sequenceRef.current = new Tone.Sequence(
+      (time, stepIndex) => {
+        setCurrentStep(stepIndex);
+        if (stepIndex === 0) {
+          setGrid((currentGrid) =>
+            nextGeneration(currentGrid, numRows, numCols),
+          );
         }
-      }
-    }, [...Array(numCols).keys()], "8n").start(0);
+
+        const currentGrid = gridRef.current;
+
+        for (let row = 0; row < numRows; row++) {
+          const instrument = currentGrid[row][stepIndex];
+
+          if (
+            instrument &&
+            instrument !== "Oscilador" &&
+            currentScaleNotes[row]
+          ) {
+            const note = currentScaleNotes[row];
+            synthsRef.current[instrument]?.triggerAttackRelease(
+              note,
+              "8n",
+              time,
+            );
+          }
+        }
+      },
+      [...Array(numCols).keys()],
+      "8n",
+    ).start(0);
 
     if (Tone.Transport.state === "started") {
       Tone.Transport.stop();
@@ -154,7 +175,9 @@ function App() {
 
     return () => {
       sequenceRef.current?.dispose();
-      Object.values(synthsRef.current ?? {}).forEach(synth => synth.dispose());
+      Object.values(synthsRef.current ?? {}).forEach((synth) =>
+        synth.dispose(),
+      );
     };
   }, [activeScale, numRows, numCols]); // <- Dependencias actualizadas
 
@@ -170,8 +193,9 @@ function App() {
   };
 
   const handleCellClick = (row, col) => {
-    const newGrid = grid.map(r => [...r]);
-    newGrid[row][col] = newGrid[row][col] === activeInstrument ? null : activeInstrument;
+    const newGrid = grid.map((r) => [...r]);
+    newGrid[row][col] =
+      newGrid[row][col] === activeInstrument ? null : activeInstrument;
     setGrid(newGrid);
   };
 
@@ -184,7 +208,10 @@ function App() {
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < numCols; col++) {
         if (Math.random() > 0.7) {
-          const randomInstrument = INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
+          const randomInstrument =
+            INSTRUMENT_NAMES[
+              Math.floor(Math.random() * INSTRUMENT_NAMES.length)
+            ];
           newGrid[row][col] = randomInstrument;
         }
       }
@@ -200,94 +227,99 @@ function App() {
   };
   const gridStyles = {
     gridTemplateColumns: `repeat(${numCols}, 1fr)`,
-    gap: '2px' // También podemos mover 'gap' aquí si queremos que sea dinámico
+    gap: "2px", // También podemos mover 'gap' aquí si queremos que sea dinámico
   };
   return (
-      <div className="app-container">
-        <Card>
-          <CardBody title="Juego de la Vida Musical" subtitle="Sintetizador generativo" />
+    <div className="app-container">
+      <Card>
+        <CardBody
+          title="Juego de la Vida Musical"
+          subtitle="Secuenciador generativo con Tone.js"
+        />
 
-          <div className="controls-card">
-            <div className="control-group">
-              <label htmlFor="instrument-select">Instrumento:</label>
-              <select
-                  id="instrument-select"
-                  value={activeInstrument}
-                  onChange={(e) => setActiveInstrument(e.target.value)}
-              >
-                {INSTRUMENT_NAMES.map(name => (
-                    <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="control-group">
-              <label htmlFor="scale-select">Escala:</label>
-              <select
-                  id="scale-select"
-                  value={activeScale}
-                  onChange={(e) => setActiveScale(e.target.value)}
-              >
-                {Object.keys(SCALES).map(name => (
-                    <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="controls-card">
-            <div className="control-group">
-              <label htmlFor="rows-input">Filas (Notas):</label>
-              <input
-                  id="rows-input"
-                  type="number"
-                  value={numRows}
-                  onChange={handleDimensionChange(setNumRows)}
-                  min="1"
-                  style={{width: '60px'}}
-              />
-            </div>
-            <div className="control-group">
-              <label htmlFor="cols-input">Columnas (Pasos):</label>
-              <input
-                  id="cols-input"
-                  type="number"
-                  value={numCols}
-                  onChange={handleDimensionChange(setNumCols)}
-                  min="1"
-                  style={{width: '60px'}}
-              />
-            </div>
-            {/* Nuevo input */}
-            <div className="control-group">
-              <label htmlFor="bpm-slider">Velocidad: {bpm} BPM</label>
-              <input
-                  id="bpm-slider"
-                  type="range"
-                  min="40"
-                  max="240"
-                  value={bpm}
-                  onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-                  style={{width: '100px'}}
-              />
-            </div>
+        {/* Panel superior con controles principales */}
+        <div className="top-controls">
+          <div className="control-group">
+            <label>Instrumento</label>
+            <select
+              value={activeInstrument}
+              onChange={(e) => setActiveInstrument(e.target.value)}
+            >
+              {INSTRUMENT_NAMES.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Juego de la Vida</h3>
-            <p style={{ fontSize: '14px', color: '#666' }}>
-              Click para asignar instrumentos. Las células "vivas" evolucionan y generan música.
-            </p>
-            <Grid grid={grid} onCellClick={handleCellClick} style={gridStyles} />
+          <div className="control-group">
+            <label>Escala</label>
+            <select
+              value={activeScale}
+              onChange={(e) => setActiveScale(e.target.value)}
+            >
+              {Object.keys(SCALES).map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="controls-card">
-            <Boton onClick={clearGrid} isLoading={false}>Limpiar</Boton>
-            <Boton onClick={randomizeGrid} isLoading={false}>Aleatorio</Boton>
+          <div className="control-group bpm-slider">
+            <label>Velocidad: {bpm} BPM</label>
+            <input
+              type="range"
+              min="40"
+              max="240"
+              value={bpm}
+              onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+            />
+          </div>
+
+          <div className="play-buttons">
             <Boton onClick={handleStartStop} isLoading={false}>
-              {isPlaying ? "Detener" : "Reproducir"}
+              {isPlaying ? "⏸ Detener" : "▶ Reproducir"}
             </Boton>
           </div>
-        </Card>
-      </div>
+        </div>
+
+        {/* Panel secundario */}
+        <div className="secondary-controls">
+          <div className="control-group">
+            <label>Filas</label>
+            <input
+              type="number"
+              value={numRows}
+              min="1"
+              onChange={handleDimensionChange(setNumRows)}
+            />
+          </div>
+          <div className="control-group">
+            <label>Columnas</label>
+            <input
+              type="number"
+              value={numCols}
+              min="1"
+              onChange={handleDimensionChange(setNumCols)}
+            />
+          </div>
+          <Boton onClick={clearGrid}>Limpiar</Boton>
+          <Boton onClick={randomizeGrid}>Aleatorio</Boton>
+        </div>
+
+        {/* Grid */}
+        <div className="grid-container">
+          <Grid
+            grid={grid}
+            onCellClick={handleCellClick}
+            style={gridStyles}
+            currentStep={currentStep} // nuevo
+          />
+        </div>
+      </Card>
+    </div>
   );
 }
 
