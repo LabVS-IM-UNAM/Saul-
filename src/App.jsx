@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import * as Tone from "tone";
+import React from 'react';
 import "./App.css";
+
+import {Container, Card, Form, Button, Row, Col, Stack} from 'react-bootstrap';
 
 // Componentes
 import Grid from "./components/Grid";
-import Boton from "./components/Boton";
-import Card, { CardBody } from "./components/Card.jsx";
 
 // --- Constantes de Configuración ---
 const INSTRUMENT_NAMES = ["Synth", "AMSynth", "FMSynth"];
@@ -62,8 +63,8 @@ const nextGeneration = (grid, rows, cols) => {
       if (isAlive && (neighbors === 2 || neighbors === 3)) {
         newGrid[row][col] = currentInstrument;
       } else if (!isAlive && neighbors === 3) {
-        const randomInstrument =
-          INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
+        let randomInstrument;
+        randomInstrument = INSTRUMENT_NAMES[Math.floor(Math.random() * INSTRUMENT_NAMES.length)];
         newGrid[row][col] = randomInstrument;
       }
     }
@@ -168,9 +169,9 @@ function App() {
       "8n",
     ).start(0);
 
-    if (Tone.Transport.state === "started") {
-      Tone.Transport.stop();
-      Tone.Transport.start();
+    if (Tone.getTransport().state === "started") {
+      Tone.getTransport().stop();
+      Tone.getTransport().start();
     }
 
     return () => {
@@ -184,10 +185,10 @@ function App() {
   const handleStartStop = async () => {
     await Tone.start();
     if (isPlaying) {
-      Tone.Transport.stop();
+      Tone.getTransport().stop();
       setIsPlaying(false);
     } else {
-      Tone.Transport.start();
+      Tone.getTransport().start();
       setIsPlaying(true);
     }
   };
@@ -208,10 +209,10 @@ function App() {
     for (let row = 0; row < numRows; row++) {
       for (let col = 0; col < numCols; col++) {
         if (Math.random() > 0.7) {
-          const randomInstrument =
-            INSTRUMENT_NAMES[
+          let randomInstrument;
+          randomInstrument = INSTRUMENT_NAMES[
               Math.floor(Math.random() * INSTRUMENT_NAMES.length)
-            ];
+              ];
           newGrid[row][col] = randomInstrument;
         }
       }
@@ -230,97 +231,111 @@ function App() {
     gap: "2px", // También podemos mover 'gap' aquí si queremos que sea dinámico
   };
   return (
-    <div className="app-container">
-      <Card>
-        <CardBody
-          title="Juego de la Vida Musical"
-          subtitle="Secuenciador generativo con Tone.js"
-        />
+      // 'Container' centra el contenido y le da márgenes apropiados
+      <Container className="my-4">
+        <Card>
+          <Card.Body>
+            <Card.Title as="h1">Juego de la Vida Musical</Card.Title>
+            <Card.Subtitle className="mb-4 text-muted">
+              Secuenciador generativo con Tone.js
+            </Card.Subtitle>
 
-        {/* Panel superior con controles principales */}
-        <div className="top-controls">
-          <div className="control-group">
-            <label>Instrumento</label>
-            <select
-              value={activeInstrument}
-              onChange={(e) => setActiveInstrument(e.target.value)}
-            >
-              {INSTRUMENT_NAMES.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Usamos el sistema de rejilla (Row/Col) para organizar los paneles */}
+            <Row className="g-3">
+              {/* Panel de Controles Principales */}
+              <Col md={6}>
+                <h5 className="mb-3">Controles Principales</h5>
+                {/* 'Stack' ayuda a espaciar elementos verticalmente */}
+                <Stack gap={3}>
+                  <Button
+                      variant={isPlaying ? "warning" : "primary"}
+                      onClick={handleStartStop}
+                  >
+                    {isPlaying ? "⏸︎ Detener" : "▶︎ Reproducir"}
+                  </Button>
 
-          <div className="control-group">
-            <label>Escala</label>
-            <select
-              value={activeScale}
-              onChange={(e) => setActiveScale(e.target.value)}
-            >
-              {Object.keys(SCALES).map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
+                  <Form.Group controlId="bpm-slider">
+                    <Form.Label column={"sm"}>Tempo: {bpm} BPM</Form.Label>
+                    <Form.Range
+                        min="40"
+                        max="240"
+                        value={bpm}
+                        onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+                    />
+                  </Form.Group>
 
-          <div className="control-group bpm-slider">
-            <label>Velocidad: {bpm} BPM</label>
-            <input
-              type="range"
-              min="40"
-              max="240"
-              value={bpm}
-              onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-            />
-          </div>
+                  <Form.Group controlId="instrument-select">
+                    <Form.Label column={"sm"}>Instrumento</Form.Label>
+                    <Form.Select value={activeInstrument} onChange={(e) => setActiveInstrument(e.target.value)}>
+                      {INSTRUMENT_NAMES.map((name) => (
+                          <option key={name} value={name}>{name}</option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
 
-          <div className="play-buttons">
-            <Boton onClick={handleStartStop} isLoading={false}>
-              {isPlaying ? "⏸ Detener" : "▶ Reproducir"}
-            </Boton>
-          </div>
-        </div>
+                  <Form.Group controlId="scale-select">
+                    <Form.Label column={"sm"}>Escala Musical</Form.Label>
+                    <Form.Select value={activeScale} onChange={(e) => setActiveScale(e.target.value)}>
+                      {Object.keys(SCALES).map((name) => (
+                          <option key={name} value={name}>{name}</option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Stack>
+              </Col>
 
-        {/* Panel secundario */}
-        <div className="secondary-controls">
-          <div className="control-group">
-            <label>Filas</label>
-            <input
-              type="number"
-              value={numRows}
-              min="1"
-              onChange={handleDimensionChange(setNumRows)}
-            />
-          </div>
-          <div className="control-group">
-            <label>Columnas</label>
-            <input
-              type="number"
-              value={numCols}
-              min="1"
-              onChange={handleDimensionChange(setNumCols)}
-            />
-          </div>
-          <Boton onClick={clearGrid}>Limpiar</Boton>
-          <Boton onClick={randomizeGrid}>Aleatorio</Boton>
-        </div>
+              {/* Panel de Controles de la Rejilla */}
+              <Col md={6}>
+                <h5 className="mb-3">Configuración de la Rejilla</h5>
+                <Row>
+                  <Col>
+                    <Form.Group controlId="rows-input">
+                      <Form.Label column={"sm"}>Filas</Form.Label>
+                      <Form.Control
+                          type="number"
+                          value={numRows}
+                          min="1"
+                          onChange={handleDimensionChange(setNumRows)}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="cols-input">
+                      <Form.Label>Columnas</Form.Label>
+                      <Form.Control
+                          type="number"
+                          value={numCols}
+                          min="1"
+                          onChange={handleDimensionChange(setNumCols)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Stack direction="horizontal" gap={2} className="mt-3">
+                  <Button variant="secondary" onClick={clearGrid} className="w-100">
+                    Limpiar
+                  </Button>
+                  <Button variant="outline-secondary" onClick={randomizeGrid} className="w-100">
+                    Aleatorio
+                  </Button>
+                </Stack>
+              </Col>
+            </Row>
 
-        {/* Grid */}
-        <div className="grid-container">
-          <Grid
-            grid={grid}
-            onCellClick={handleCellClick}
-            style={gridStyles}
-            currentStep={currentStep} // nuevo
-          />
-        </div>
-      </Card>
-    </div>
+            {/* Grid se mantiene igual, pero le agregamos un margen superior */}
+            <div className="mt-4">
+              <Grid
+                  grid={grid}
+                  onCellClick={handleCellClick}
+                  style={gridStyles}
+                  currentStep={currentStep}
+              />
+            </div>
+          </Card.Body>
+        </Card>
+      </Container>
   );
 }
+
 
 export default App;
