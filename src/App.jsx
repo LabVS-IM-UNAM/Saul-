@@ -240,97 +240,120 @@ function App() {
               Secuenciador generativo con Tone.js
             </Card.Subtitle>
 
-            {/* Usamos el sistema de rejilla (Row/Col) para organizar los paneles */}
+            {/* Layout principal: Grid (80%) y Controles (20%) */}
             <Row className="g-3">
-              {/* Panel de Controles Principales */}
-              <Col md={6}>
-                <h5 className="mb-3">Controles Principales</h5>
-                {/* 'Stack' ayuda a espaciar elementos verticalmente */}
-                <Stack gap={3}>
-                  <Button
-                      variant={isPlaying ? "warning" : "primary"}
-                      onClick={handleStartStop}
-                  >
-                    {isPlaying ? "⏸︎ Detener" : "▶︎ Reproducir"}
-                  </Button>
-
-                  <Form.Group controlId="bpm-slider">
-                    <Form.Label column={"sm"}>Tempo: {bpm} BPM</Form.Label>
-                    <Form.Range
-                        min="40"
-                        max="240"
-                        value={bpm}
-                        onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="instrument-select">
-                    <Form.Label column={"sm"}>Instrumento</Form.Label>
-                    <Form.Select value={activeInstrument} onChange={(e) => setActiveInstrument(e.target.value)}>
-                      {INSTRUMENT_NAMES.map((name) => (
-                          <option key={name} value={name}>{name}</option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-
-                  <Form.Group controlId="scale-select">
-                    <Form.Label column={"sm"}>Escala Musical</Form.Label>
-                    <Form.Select value={activeScale} onChange={(e) => setActiveScale(e.target.value)}>
-                      {Object.keys(SCALES).map((name) => (
-                          <option key={name} value={name}>{name}</option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Stack>
+              {/* Grid Musical - 80% del espacio */}
+              <Col lg={9}>
+                <div className="mb-3">
+                  <Grid
+                      grid={grid}
+                      onCellClick={handleCellClick}
+                      style={gridStyles}
+                      currentStep={currentStep}
+                  />
+                </div>
               </Col>
 
-              {/* Panel de Controles de la Rejilla */}
-              <Col md={6}>
-                <h5 className="mb-3">Configuración de la Rejilla</h5>
-                <Row>
-                  <Col>
-                    <Form.Group controlId="rows-input">
-                      <Form.Label column={"sm"}>Filas</Form.Label>
-                      <Form.Control
-                          type="number"
-                          value={numRows}
-                          min="1"
-                          onChange={handleDimensionChange(setNumRows)}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId="cols-input">
-                      <Form.Label>Columnas</Form.Label>
-                      <Form.Control
-                          type="number"
-                          value={numCols}
-                          min="1"
-                          onChange={handleDimensionChange(setNumCols)}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Stack direction="horizontal" gap={2} className="mt-3">
-                  <Button variant="secondary" onClick={clearGrid} className="w-100">
-                    Limpiar
-                  </Button>
-                  <Button variant="outline-secondary" onClick={randomizeGrid} className="w-100">
-                    Aleatorio
-                  </Button>
-                </Stack>
+              {/* Panel de Controles - 20% del espacio */}
+              <Col lg={3}>
+                <div className="h-100">
+                  <h5 className="mb-3">Controles</h5>
+                  <Stack gap={3}>
+                    {/* Controles de Reproducción */}
+                    <div>
+                      <Button
+                          variant={isPlaying ? "warning" : "primary"}
+                          onClick={handleStartStop}
+                          className="w-100 mb-2"
+                          size="sm"
+                      >
+                        {isPlaying ? "⏸︎ Stop" : "▶︎ Play"}
+                      </Button>
+
+                      <Form.Group controlId="bpm-slider" className="mb-3">
+                        <Form.Label column={"sm"} className="small">Tempo: {bpm} BPM</Form.Label>
+                        <Form.Range
+                            min="40"
+                            max="240"
+                            value={bpm}
+                            onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+                            size="sm"
+                        />
+                      </Form.Group>
+                    </div>
+
+                    {/* Selección de Instrumentos y Escala */}
+                    <div>
+                      <Form.Group controlId="instrument-select" className="mb-2">
+                        <Form.Label column={"sm"} className="small">Instrumento</Form.Label>
+                        <Form.Select 
+                            value={activeInstrument} 
+                            onChange={(e) => setActiveInstrument(e.target.value)}
+                            size="sm"
+                        >
+                          {INSTRUMENT_NAMES.map((name) => (
+                              <option key={name} value={name}>{name}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+
+                      <Form.Group controlId="scale-select" className="mb-3">
+                        <Form.Label column={"sm"} className="small">Escala</Form.Label>
+                        <Form.Select 
+                            value={activeScale} 
+                            onChange={(e) => setActiveScale(e.target.value)}
+                            size="sm"
+                        >
+                          {Object.keys(SCALES).map((name) => (
+                              <option key={name} value={name}>{name}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </div>
+
+                    {/* Configuración del Grid */}
+                    <div>
+                      <h6 className="small mb-2">Configuración</h6>
+                      <Row className="g-2 mb-2">
+                        <Col>
+                          <Form.Group controlId="rows-input">
+                            <Form.Label column={"sm"} className="small">Filas</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={numRows}
+                                min="1"
+                                onChange={handleDimensionChange(setNumRows)}
+                                size="sm"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col>
+                          <Form.Group controlId="cols-input">
+                            <Form.Label column={"sm"} className="small">Cols</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={numCols}
+                                min="1"
+                                onChange={handleDimensionChange(setNumCols)}
+                                size="sm"
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      
+                      <div className="d-grid gap-2">
+                        <Button variant="outline-danger" onClick={clearGrid} size="sm">
+                          Clear
+                        </Button>
+                        <Button variant="outline-success" onClick={randomizeGrid} size="sm">
+                          Random
+                        </Button>
+                      </div>
+                    </div>
+                  </Stack>
+                </div>
               </Col>
             </Row>
-
-            {/* Grid se mantiene igual, pero le agregamos un margen superior */}
-            <div className="mt-4">
-              <Grid
-                  grid={grid}
-                  onCellClick={handleCellClick}
-                  style={gridStyles}
-                  currentStep={currentStep}
-              />
-            </div>
           </Card.Body>
         </Card>
       </Container>
