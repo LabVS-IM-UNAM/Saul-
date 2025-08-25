@@ -1,0 +1,66 @@
+import { Form, Button } from 'react-bootstrap';
+import { INSTRUMENT_NAMES } from '../utils/gameLogic';
+import { SCALES } from '../utils/audioEngine';
+
+const PlaybackControls = ({
+  isPlaying,
+  onStartStop,
+  bpm,
+  onBpmChange,
+  activeInstrument,
+  onInstrumentChange,
+  activeScale,
+  onScaleChange
+}) => {
+  return (
+    <div>
+      <Button
+        variant={isPlaying ? "warning" : "primary"}
+        onClick={onStartStop}
+        className="w-100 mb-2"
+        size="sm"
+      >
+        {isPlaying ? "⏸︎ Stop" : "▶︎ Play"}
+      </Button>
+
+      <Form.Group controlId="bpm-slider" className="mb-3">
+        <Form.Label column={"sm"} className="small">Tempo: {bpm} BPM</Form.Label>
+        <Form.Range
+          min="40"
+          max="240"
+          value={bpm}
+          onChange={onBpmChange}
+          size="sm"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="instrument-select" className="mb-2">
+        <Form.Label column={"sm"} className="small">Instrumento</Form.Label>
+        <Form.Select 
+          value={activeInstrument} 
+          onChange={onInstrumentChange}
+          size="sm"
+        >
+          {INSTRUMENT_NAMES.map((name) => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group controlId="scale-select" className="mb-3">
+        <Form.Label column={"sm"} className="small">Escala</Form.Label>
+        <Form.Select 
+          value={activeScale} 
+          onChange={onScaleChange}
+          size="sm"
+        >
+          {Object.keys(SCALES).map((name) => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+    </div>
+  );
+};
+
+export default PlaybackControls;
