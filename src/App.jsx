@@ -74,6 +74,7 @@ function App() {
 
   const clearGrid = () => {
     setGrid(createEmptyGrid(numRows, numCols));
+    setSavedState(null);
   };
 
   const handleRandomizeGrid = () => {
