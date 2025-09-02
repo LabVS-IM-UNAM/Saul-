@@ -91,8 +91,8 @@ body {
 }
 
 .grid-cell.active.instrument-Synth { background-color: #3498db; }
-.grid-cell.active.instrument-AMSynth { background-color: #e74c3c; }
-.grid-cell.active.instrument-FMSynth { background-color: #2ecc71; }
+.grid-cell.active.instrument-AMSynth { background-color: #8bc34a; }
+.grid-cell.active.instrument-FMSynth { background-color: #ff9800; }
 .grid-cell.active.instrument-PluckSynth { background-color: #f1c40f; }
 .grid-cell.active.instrument-Bass { background-color: #9b59b6; } /* Morado para el bajo */
 .grid-cell.active.instrument-Lead { background-color: #e67e22; } /* Naranja para el lead */
@@ -105,12 +105,3 @@ body {
   box-shadow: 0 0 6px gold;
 }
 
-.grid-cell.active.instrument-Synth {
-  background-color: #4cafef;
-}
-.grid-cell.active.instrument-AMSynth {
-  background-color: #8bc34a;
-}
-.grid-cell.active.instrument-FMSynth {
-  background-color: #ff9800;
-}

@@ -67,8 +67,19 @@ function App() {
 
   const handleCellClick = (row, col) => {
     const newGrid = grid.map((r) => [...r]);
-    newGrid[row][col] =
-      newGrid[row][col] === activeInstrument ? null : activeInstrument;
+    const currentCell = newGrid[row][col];
+    
+    if (currentCell === null || currentCell === undefined) {
+      // Si la célula está vacía, crea una nueva con el instrumento activo
+      newGrid[row][col] = {
+        instrument: activeInstrument,
+        generation: 0
+      };
+    } else {
+      // Si la célula está ocupada, la limpia
+      newGrid[row][col] = null;
+    }
+    
     setGrid(newGrid);
   };
 

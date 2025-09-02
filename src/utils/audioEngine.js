@@ -72,7 +72,9 @@ class AudioEngine {
         const currentGrid = gridRef.current;
 
         for (let row = 0; row < numRows; row++) {
-          const instrument = currentGrid[row][stepIndex];
+          const cellData = currentGrid[row][stepIndex];
+          // Extraer el instrumento del objeto o usar el valor directo para compatibilidad
+          const instrument = cellData?.instrument || cellData;
 
           if (
             instrument &&
