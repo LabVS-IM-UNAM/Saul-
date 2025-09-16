@@ -43,10 +43,10 @@ const GridConfiguration = ({
       
       <div className="d-grid gap-2">
         <Button variant="outline-danger" onClick={onClear} size="sm">
-          Clear
+          Borrar
         </Button>
         <Button variant="outline-success" onClick={onRandomize} size="sm">
-          Random
+          Aleatorio
         </Button>
         <Button 
           variant={savedState ? "outline-warning" : "outline-info"} 
