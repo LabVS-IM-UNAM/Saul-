@@ -20,14 +20,14 @@ const PlaybackControls = ({
         className="w-100 mb-2"
         size="sm"
       >
-        {isPlaying ? "⏸︎ Stop" : "▶︎ Play"}
+        {isPlaying ? "⏸︎ Parar" : "▶︎ Iniciar"}
       </Button>
 
       <Form.Group controlId="bpm-slider" className="mb-3">
         <Form.Label column={"sm"} className="small">Tempo: {bpm} BPM</Form.Label>
         <Form.Range
           min="40"
-          max="240"
+          max="480"
           value={bpm}
           onChange={onBpmChange}
           size="sm"

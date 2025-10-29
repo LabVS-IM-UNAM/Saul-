@@ -29,7 +29,7 @@ const GridConfiguration = ({
         </Col>
         <Col>
           <Form.Group controlId="cols-input">
-            <Form.Label column={"sm"} className="small">Cols</Form.Label>
+            <Form.Label column={"sm"} className="small">Columnas</Form.Label>
             <Form.Control
               type="number"
               value={numCols}
