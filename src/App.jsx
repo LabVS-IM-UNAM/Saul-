@@ -88,10 +88,14 @@ function App() {
   const clearGrid = () => {
     setGrid(createEmptyGrid(numRows, numCols));
     setSavedState(null);
+    audioEngineRef.current.resetPosition();
+    setCurrentStep(0);
   };
 
   const handleRandomizeGrid = () => {
     setGrid(randomizeGrid(numRows, numCols));
+    audioEngineRef.current.resetPosition();
+    setCurrentStep(0);
   };
 
   const handleSaveInitialState = () => {
@@ -113,6 +117,7 @@ function App() {
       setActiveInstrument(savedState.activeInstrument);
       setActiveScale(savedState.activeScale);
       setBpm(savedState.bpm);
+      audioEngineRef.current.resetPosition();
       setCurrentStep(0);
     }
   };

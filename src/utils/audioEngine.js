@@ -40,6 +40,9 @@ class AudioEngine {
     this.synths = {};
     this.sequence = null;
     this.isInitialized = false;
+    this.hasCompletedFirstLoop = false;
+    this.currentStepIndex = 0;
+    this.pausedStep = 0;
   }
 
   initialize() {
@@ -55,25 +58,40 @@ class AudioEngine {
   }
 
   createSequence(activeScale, numRows, numCols, gridRef, setCurrentStep, setGrid, nextGeneration) {
+    // Preservar estados antes de dispose
+    const preservedHasCompletedFirstLoop = this.hasCompletedFirstLoop;
+    const preservedPausedStep = this.pausedStep;
+    
     this.dispose();
     this.initialize();
+    
+    // Restaurar estados preservados
+    this.hasCompletedFirstLoop = preservedHasCompletedFirstLoop;
+    this.currentStepIndex = preservedPausedStep;
 
     const currentScaleNotes = generateScaleNotes(SCALES[activeScale], numRows);
 
     this.sequence = new Tone.Sequence(
       (time, stepIndex) => {
+        this.currentStepIndex = stepIndex;
         setCurrentStep(stepIndex);
-        if (stepIndex === 0) {
+        
+        // Solo evolucionar cuando completamos un ciclo completo (llegamos al paso 0 después de haber pasado por todos los pasos)
+        if (stepIndex === 0 && this.hasCompletedFirstLoop) {
           setGrid((currentGrid) =>
             nextGeneration(currentGrid, numRows, numCols),
           );
+        }
+        
+        // Marcar que completamos el primer ciclo cuando llegamos al último paso
+        if (stepIndex === numCols - 1) {
+          this.hasCompletedFirstLoop = true;
         }
 
         const currentGrid = gridRef.current;
 
         for (let row = 0; row < numRows; row++) {
           const cellData = currentGrid[row][stepIndex];
-          // Extraer el instrumento del objeto o usar el valor directo para compatibilidad
           const instrument = cellData?.instrument || cellData;
 
           if (
@@ -106,11 +124,24 @@ class AudioEngine {
 
   async start() {
     await Tone.start();
+    if (this.sequence && this.pausedStep > 0) {
+      // Detener y recrear la secuencia comenzando desde el paso pausado
+      this.sequence.stop();
+      this.sequence.start(0, this.pausedStep);
+    }
     Tone.getTransport().start();
   }
 
   stop() {
+    // Guardar el paso actual cuando se pausa
+    this.pausedStep = this.currentStepIndex;
     Tone.getTransport().stop();
+  }
+
+  resetPosition() {
+    this.pausedStep = 0;
+    this.currentStepIndex = 0;
+    this.hasCompletedFirstLoop = false;
   }
 
   dispose() {
@@ -121,6 +152,9 @@ class AudioEngine {
     this.synths = {};
     this.sequence = null;
     this.isInitialized = false;
+    this.hasCompletedFirstLoop = false;
+    this.currentStepIndex = 0;
+    this.pausedStep = 0;
   }
 }
 

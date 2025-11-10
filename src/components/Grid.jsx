@@ -1,12 +1,36 @@
 // src/components/Grid.jsx
 
-import React from "react";
+import React, { useState, useRef } from "react";
 
 function Grid({ grid, onCellClick, style, currentStep }) {
   if (!Array.isArray(grid)) return null;
 
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const gridRef = useRef(null);
+
+  const handleMouseDown = (rowIndex, colIndex) => {
+    setIsMouseDown(true);
+    onCellClick(rowIndex, colIndex);
+  };
+
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+  };
+
+  const handleMouseEnter = (rowIndex, colIndex) => {
+    if (isMouseDown) {
+      onCellClick(rowIndex, colIndex);
+    }
+  };
+
   return (
-    <div className="grid" style={style}>
+    <div 
+      className="grid" 
+      style={{...style, userSelect: 'none'}} 
+      ref={gridRef}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
       {grid.map((row, rowIndex) =>
         row.map((cellValue, colIndex) => {
           const isActiveStep = colIndex === currentStep;
@@ -21,7 +45,8 @@ function Grid({ grid, onCellClick, style, currentStep }) {
                 ${cellValue ? "active" : ""} 
                 instrument-${instrument || "none"} 
                 ${isActiveStep ? "active-step" : ""}`}
-              onClick={() => onCellClick(rowIndex, colIndex)}
+              onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+              onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
               title={instrument ? `Instrumento: ${instrument} (Gen: ${generation})` : "Celda vacía"}
             />
           );
