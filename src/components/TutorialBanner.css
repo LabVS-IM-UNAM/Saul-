@@ -13,7 +13,7 @@
 
 /* Header Styles */
 .tutorial-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: white;
   color: white;
   border-bottom: none;
   padding: 1.5rem;
@@ -25,9 +25,9 @@
 }
 
 .tutorial-header .btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(49, 9, 9, 0.2);
   border: none;
-  color: white;
+  color: #b22727;
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -113,7 +113,7 @@
 
 .game-preview {
   padding: 1rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #c6cad0;
   border-radius: 10px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -122,7 +122,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2px;
-  width: 120px;
+  width: 110px;
 }
 
 .mini-cell {
@@ -130,12 +130,10 @@
   height: 25px;
   background-color: #e9ecef;
   border-radius: 3px;
-  transition: all 0.3s ease;
 }
 
 .mini-cell.active-demo {
-  background-color: #667eea;
-  animation: pulse 2s infinite;
+  background-color: #09F;
 }
 
 @keyframes pulse {

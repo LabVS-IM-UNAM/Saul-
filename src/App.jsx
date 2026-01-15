@@ -150,7 +150,7 @@ function App() {
               onClick={() => setShowTutorial(true)}
               className="tutorial-btn"
             >
-              📖 Tutorial
+              Tutorial
             </Button>
           </div>
 
