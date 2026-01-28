@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import React from 'react';
 import "./App.css";
 
-import {Container, Card, Row, Col, Stack} from 'react-bootstrap';
+import {Container, Card, Row, Col, Stack, Button} from 'react-bootstrap';
 
 // Componentes
 import Grid from "./components/Grid";
 import PlaybackControls from "./components/PlaybackControls";
 import GridConfiguration from "./components/GridConfiguration";
+import TutorialBanner from "./components/TutorialBanner";
 
 // Utils
 import { createEmptyGrid, nextGeneration, randomizeGrid } from "./utils/gameLogic";
@@ -23,6 +24,7 @@ function App() {
   const [bpm, setBpm] = useState(120);
   const [currentStep, setCurrentStep] = useState(0);
   const [savedState, setSavedState] = useState(null);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   const audioEngineRef = useRef(new AudioEngine());
   const gridRef = useRef(grid);
@@ -86,10 +88,14 @@ function App() {
   const clearGrid = () => {
     setGrid(createEmptyGrid(numRows, numCols));
     setSavedState(null);
+    audioEngineRef.current.resetPosition();
+    setCurrentStep(0);
   };
 
   const handleRandomizeGrid = () => {
     setGrid(randomizeGrid(numRows, numCols));
+    audioEngineRef.current.resetPosition();
+    setCurrentStep(0);
   };
 
   const handleSaveInitialState = () => {
@@ -111,6 +117,7 @@ function App() {
       setActiveInstrument(savedState.activeInstrument);
       setActiveScale(savedState.activeScale);
       setBpm(savedState.bpm);
+      audioEngineRef.current.resetPosition();
       setCurrentStep(0);
     }
   };
@@ -130,10 +137,22 @@ function App() {
     <Container className="my-4">
       <Card>
         <Card.Body>
-          <Card.Title as="h1">Juego de la Vida Musical</Card.Title>
-          <Card.Subtitle className="mb-4 text-muted">
-            Secuenciador generativo con Tone.js
-          </Card.Subtitle>
+          <div className="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <Card.Title as="h1">Juego de la Vida Musical</Card.Title>
+              <Card.Subtitle className="text-muted">
+                Basado en un secuenciador de sonidos
+              </Card.Subtitle>
+            </div>
+            <Button 
+              variant="outline-info" 
+              size="sm" 
+              onClick={() => setShowTutorial(true)}
+              className="tutorial-btn"
+            >
+              Tutorial
+            </Button>
+          </div>
 
           <Row className="g-3">
             <Col lg={9}>
@@ -179,6 +198,11 @@ function App() {
           </Row>
         </Card.Body>
       </Card>
+      
+      <TutorialBanner 
+        show={showTutorial} 
+        onHide={() => setShowTutorial(false)} 
+      />
     </Container>
   );
 }

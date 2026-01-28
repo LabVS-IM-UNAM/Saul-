@@ -1,0 +1,317 @@
+/* Tutorial Modal Styles */
+.tutorial-modal .modal-content {
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: none;
+  overflow: hidden;
+}
+
+.tutorial-modal .modal-backdrop {
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Header Styles */
+.tutorial-header {
+  background: white;
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+}
+
+.tutorial-header .modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.tutorial-header .btn {
+  background: rgba(49, 9, 9, 0.2);
+  border: none;
+  color: #b22727;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.tutorial-header .btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Body Styles */
+.tutorial-body {
+  padding: 2rem;
+  min-height: 400px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tutorial-body.animating {
+  opacity: 0.7;
+  transform: translateY(10px);
+}
+
+/* Step Indicator */
+.step-indicator {
+  text-align: center;
+}
+
+.step-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #dee2e6;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.step-dot.active {
+  background-color: #667eea;
+  transform: scale(1.3);
+}
+
+.step-dot.completed {
+  background-color: #28a745;
+}
+
+.step-dot.completed::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 8px;
+  font-weight: bold;
+}
+
+/* Content Animations */
+.tutorial-content {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Game Preview Styles */
+.tutorial-visual {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.game-preview {
+  padding: 1rem;
+  background: #c6cad0;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  width: 110px;
+}
+
+.mini-cell {
+  width: 25px;
+  height: 25px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  /* Añadimos transición para cuando se mueva en el futuro */
+  transition: all 0.2s ease;
+  /* Necesario para que el borde no sume tamaño si usas border-box,
+     pero aquí usaremos box-shadow para no afectar el layout */
+}
+
+.mini-cell.active-demo {
+  background-color: #09F;
+}
+
+/* NUEVA CLASE PARA EL EFECTO SCANNER */
+.mini-cell.scanner-active {
+  /* Borde amarillo brillante */
+  box-shadow: inset 0 0 0 2px #ffca2c, 0 0 8px rgba(255, 202, 44, 0.6);
+
+  /* Opcional: un fondo ligeramente amarillo para reforzar */
+  background-color: rgba(255, 215, 0, 0.2);
+
+  /* Si la célula también está activa (azul), mantenemos el azul pero con borde amarillo */
+}
+
+/* Ajuste específico: Si la célula es azul Y está en el escáner */
+.mini-cell.active-demo.scanner-active {
+  background-color: #0088cc; /* Un azul un poco más oscuro o mezclado */
+  box-shadow: inset 0 0 0 2px #ffca2c, 0 0 10px #ffca2c; /* Resplandor más fuerte */
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Rule Boxes */
+.rule-box {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+}
+
+.rule-box h6.text-success + p {
+  color: #155724;
+}
+
+.rule-box h6.text-danger + p {
+  color: #721c24;
+}
+
+/* Color Demo */
+.color-demo {
+  text-align: center;
+}
+
+.color-sample {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.color-sample:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Generation colors matching the game logic */
+.generation-0 {
+  background: #3498db;
+}
+
+.generation-1 {
+  background:  #8bc34a;
+}
+
+.generation-2 {
+  background:  #ff9800;
+}
+
+.generation-3 {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* Sound Info */
+.sound-info {
+  border-left: 4px solid #667eea;
+  position: relative;
+}
+
+.sound-info::before {
+  content: '🎵';
+  position: absolute;
+  top: -5px;
+  right: 10px;
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Controls Guide */
+.controls-guide .control-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #F1F1F3;
+  transition: all 0.3s ease;
+}
+
+.controls-guide .control-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.controls-guide .control-item h6 {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Footer Styles */
+.tutorial-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 2rem;
+}
+
+.step-counter {
+  font-weight: 500;
+}
+
+.tutorial-footer .btn {
+  min-width: 100px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.tutorial-footer .btn:hover {
+  transform: translateY(-2px);
+}
+
+.tutorial-footer .btn-success {
+  background:#28a745;
+  border: none;
+}
+
+.tutorial-footer .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tutorial-body {
+    padding: 1rem;
+  }
+  
+  .tutorial-header {
+    padding: 1rem;
+  }
+  
+  .tutorial-footer {
+    padding: 1rem;
+  }
+  
+  .mini-grid {
+    width: 100px;
+  }
+  
+  .mini-cell {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .color-sample {
+    height: 30px;
+  }
+}

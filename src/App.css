@@ -105,3 +105,16 @@ body {
   box-shadow: 0 0 6px gold;
 }
 
+/* Tutorial Button */
+.tutorial-btn {
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-size: 0.85rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.tutorial-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
