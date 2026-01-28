@@ -10,7 +10,7 @@ const TutorialBanner = ({ show, onHide }) => {
     {
       content: (
         <div>
-          <div className="tutorial-visual mb-3">
+          <div className="tutorial-visual mb-5">
             <div className="game-preview">
               <div className="mini-grid">
                 {[...Array(16)].map((_, i) => (
@@ -21,107 +21,113 @@ const TutorialBanner = ({ show, onHide }) => {
           </div>
             <p className="game-description text-muted mb-4" style={{ lineHeight: '1.6' }}>
                 El <strong>Juego de la Vida</strong> es una simulación matemática que funciona como un
-                "juego sin jugadores" en una cuadrícula, donde cada cuadro es una célula que puede estar
+                "juego de 0 jugadores" en una cuadrícula, donde cada cuadro es una célula que puede estar
                 <strong> viva</strong> o <strong>muerta</strong>. Su funcionamiento es automático y se basa
-                en reglas muy simples de vecindad:
-            </p>
-            <ul className="game-rules">
-                <li>
-                    <strong>Nacimiento:</strong> Una célula muerta con exactamente <strong>3</strong> vecinas vivas "nace" (se vuelve viva).
-                </li>
-                <li>
-                    <strong>Supervivencia:</strong> Una célula viva con <strong>2 o 3</strong> vecinas vivas sigue viva en la siguiente generación.
-                </li>
-                <li>
-                    <strong>Muerte por soledad:</strong> Una célula viva con <strong>menos de 2</strong> vecinas vivas muere (subpoblación).
-                </li>
-                <li>
-                    <strong>Muerte por sobrepoblación:</strong> Una célula viva con <strong>más de 3</strong> vecinas vivas muere.
-                </li>
-            </ul>
-            <p className="game-description text-muted mb-0" style={{ lineHeight: '1.6' }}>
-                Lo fascinante es que, a partir
-                de estas instrucciones tan básicas, emergen patrones complejos, estructuras que se mueven
-                y comportamientos impredecibles con solo observar cómo evoluciona el estado inicial que tú dibujaste.
+                en reglas muy simples de vecindad.
+
+                El tiempo transcurre en <strong>generaciones</strong>, que son los ciclos donde todas las
+                células se actualizan simultáneamente.
             </p>
         </div>
       )
     },
-    {/*
+    {
       content: (
         <div>
           <h6 className="mb-3">Reglas básicas:</h6>
           <Row>
-            <Col md={6}>
-              <div className="rule-box mb-3">
-                <h6 className="text-success">🟢 Nacimiento</h6>
-                <p className="small">Una célula vacía con exactamente 3 vecinos vivos nace</p>
-              </div>
-              <div className="rule-box">
-                <h6 className="text-info">💙 Supervivencia</h6>
-                <p className="small">Una célula viva con 2 o 3 vecinos sobrevive</p>
-              </div>
-            </Col>
-            <Col md={6}>
-              <div className="rule-box">
-                <h6 className="text-danger">💀 Muerte</h6>
-                <p className="small">Células con menos de 2 vecinos (soledad) o más de 3 (sobrepoblación) mueren</p>
-              </div>
-            </Col>
+             <Col md={6}>
+                <div className="rule-box mb-3 border border-success rounded-3">
+                    <h6 className={"text-success"}>Nacimiento</h6>
+                    <p className="small">Una célula muerta con exactamente <strong>3</strong> vecinas vivas nace.</p>
+                </div>
+                 <div className="rule-box  border border-success rounded-3">
+                     <h6 className={"text-success"}>Supervivencia</h6>
+                     <p className="small">Una célula viva con <strong>2 o 3</strong> vecinas vivas sigue viva en la siguiente generación.</p>
+                 </div>
+             </Col>
+             <Col>
+                 <div className="rule-box mb-5 border border-danger rounded-3">
+                     <h6 className={"text-danger"}>Muerte por soledad</h6>
+                     <p className="small">Una célula viva con <strong>menos de 2</strong> vecinas vivas muere.</p>
+                 </div>
+                 <div className="rule-box   border border-danger rounded-3">
+                     <h6 className={"text-danger"}>Muerte por sobrepoblación</h6>
+                     <p className="small">Una célula viva con <strong>más de 3</strong> vecinas vivas muere.</p>
+                 </div>
+             </Col>
           </Row>
           <div className="mt-3 p-3 bg-light rounded">
             <small className="text-muted">
-              <strong>Dato curioso:</strong> Estas simples reglas pueden crear patrones increíblemente complejos, desde estructuras estáticas hasta "naves espaciales" que se mueven por la grilla.
+              <strong>Observación: </strong>
+                Lo fascinante es que, a partir
+                de estas instrucciones tan básicas, emergen patrones complejos, estructuras que se mueven
+                y comportamientos impredecibles con solo observar cómo evoluciona el estado inicial que tú dibujaste.
+
             </small>
           </div>
         </div>
       )
-    */},
-    {/*
+    },
+    {
       content: (
         <div>
-          <p className="mb-3">
-            Cada célula no solo vive y muere, ¡también hace música! El color de cada célula indica su "edad" y determina qué instrumento suena.
+          <p className="game-description text-muted mb-3">
+            Cada célula no solo vive y muere, también hace sonido!. ¿Comó suena el juego de la vida?
           </p>
+          <p className="game-description text-muted mb-4" style={{ lineHeight: '1.6' }}> Imagina que la pantalla es una partitura en movimiento, el tiempo avanza de izquierda
+          a derecha. Una barra invisible barre la pantalla repetidamente. Cada vez que la barra toca una célula viva, se produce un sonido. Si la cuadricula cambia, la melodía cambia.</p>
 
+          <div className="tutorial-visual mb-5">
+            <div className="game-preview">
+                <div className="mini-grid">
+                    {[...Array(16)].map((_, i) => {
+                        // Calculamos la columna actual (0, 1, 2 o 3)
+                        const colIndex = i % 4;
+                        // Definimos cuál es la columna activa del escáner (ej: columna 2)
+                        const isScannerCol = colIndex === 2;
+
+                        return (
+                            <div
+                                key={i}
+                                className={`mini-cell 
+                        ${i % 3 === 0 ? 'active-demo' : ''} 
+                        ${isScannerCol ? 'scanner-active' : ''}` // Clase nueva
+                                }
+                            ></div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
           <div className="color-demo mb-4">
             <h6 className="mb-3">Evolución de colores por generación:</h6>
-            <Row className="g-2">
-              <Col xs={6} md={3}>
+              <p className="game-description text-muted mb-4" style={{ lineHeight: '1.6' }}> A diferencia de un instrumento
+              normal, aquí las notas envejecen, la supervivencia se transforma en sonido.</p>
+            <Row className="g-3 justify-content-center text-center">
+              <Col xs={3} md={3}>
                 <div className="color-sample generation-0"></div>
                 <small>Generación 0<br/>Recién nacida</small>
               </Col>
-              <Col xs={6} md={3}>
+              <Col xs={3} md={3}>
                 <div className="color-sample generation-1"></div>
                 <small>Generación 1<br/>Joven</small>
               </Col>
-              <Col xs={6} md={3}>
+              <Col xs={3} md={3}>
                 <div className="color-sample generation-2"></div>
                 <small>Generación 2<br/>Adulta</small>
               </Col>
+                {/*
               <Col xs={6} md={3}>
                 <div className="color-sample generation-3"></div>
                 <small>Generación 3+<br/>Ancestral</small>
-              </Col>
+              </Col>*/}
             </Row>
-          </div>
-
-          <div className="sound-info p-3 bg-light rounded">
-            <h6 className="mb-2">🎵 Instrumentos disponibles:</h6>
-            <div className="d-flex flex-wrap gap-2">
-              <Badge bg="primary">Synth</Badge>
-              <Badge bg="success">Piano</Badge>
-              <Badge bg="warning">Drums</Badge>
-              <Badge bg="info">Bass</Badge>
-            </div>
-            <p className="small mt-2 mb-0">
-              Cada instrumento crea diferentes texturas sonoras mientras las células evolucionan.
-            </p>
           </div>
         </div>
       )
-    */},
-    {/*
+    },
+    {
       content: (
         <div>
           <h6 className="mb-3">Cómo interactuar con el programa:</h6>
@@ -130,24 +136,24 @@ const TutorialBanner = ({ show, onHide }) => {
             <Row className="g-3">
               <Col md={6}>
                 <div className="control-item">
-                  <h6 className="text-primary">🖱️ Click en las celdas</h6>
+                  <h6 className="text-primary">Click en las celdas</h6>
                   <p className="small">Haz click para crear o eliminar células. Las nuevas células tendrán el instrumento seleccionado.</p>
                 </div>
 
                 <div className="control-item">
-                  <h6 className="text-success">▶️ Reproducir/Pausar</h6>
+                  <h6 className="text-primary">▶️ Reproducir/Pausar</h6>
                   <p className="small">Inicia la evolución del juego y la reproducción musical simultáneamente.</p>
                 </div>
               </Col>
 
               <Col md={6}>
                 <div className="control-item">
-                  <h6 className="text-warning">⚙️ Configuración</h6>
+                  <h6 className="text-primary">Configuración</h6>
                   <p className="small">Ajusta el tempo (BPM), cambia instrumentos, escalas musicales y dimensiones de la grilla.</p>
                 </div>
 
                 <div className="control-item">
-                  <h6 className="text-info">🎲 Patrones</h6>
+                  <h6 className="text-primary">Patrones</h6>
                   <p className="small">Usa "Aleatorio" para generar patrones automáticamente o "Guardar/Restablecer" para conservar configuraciones.</p>
                 </div>
               </Col>
@@ -163,12 +169,11 @@ const TutorialBanner = ({ show, onHide }) => {
           </div>
         </div>
       )
-    */}
+    }
   ];
 
   const nextStep = () => {
-    /*if (currentStep < tutorialSteps.length - 1) {*/
-    if (currentStep < 2) {
+    if (currentStep < tutorialSteps.length - 1) {
       setIsAnimating(true);
       setTimeout(() => {
         setCurrentStep(currentStep + 1);
@@ -254,7 +259,7 @@ const TutorialBanner = ({ show, onHide }) => {
           </Button>
         ) : (
           <Button variant="success" onClick={handleClose}>
-            ¡Empezar a crear! 🚀
+            ¡Iniciar!
           </Button>
         )}
       </Modal.Footer>

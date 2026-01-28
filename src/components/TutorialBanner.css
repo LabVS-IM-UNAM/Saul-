@@ -130,10 +130,31 @@
   height: 25px;
   background-color: #e9ecef;
   border-radius: 3px;
+  /* Añadimos transición para cuando se mueva en el futuro */
+  transition: all 0.2s ease;
+  /* Necesario para que el borde no sume tamaño si usas border-box,
+     pero aquí usaremos box-shadow para no afectar el layout */
 }
 
 .mini-cell.active-demo {
   background-color: #09F;
+}
+
+/* NUEVA CLASE PARA EL EFECTO SCANNER */
+.mini-cell.scanner-active {
+  /* Borde amarillo brillante */
+  box-shadow: inset 0 0 0 2px #ffca2c, 0 0 8px rgba(255, 202, 44, 0.6);
+
+  /* Opcional: un fondo ligeramente amarillo para reforzar */
+  background-color: rgba(255, 215, 0, 0.2);
+
+  /* Si la célula también está activa (azul), mantenemos el azul pero con borde amarillo */
+}
+
+/* Ajuste específico: Si la célula es azul Y está en el escáner */
+.mini-cell.active-demo.scanner-active {
+  background-color: #0088cc; /* Un azul un poco más oscuro o mezclado */
+  box-shadow: inset 0 0 0 2px #ffca2c, 0 0 10px #ffca2c; /* Resplandor más fuerte */
 }
 
 @keyframes pulse {
@@ -146,22 +167,11 @@
 .rule-box {
   padding: 1rem;
   border-radius: 8px;
-  background-color: #f8f9fa;
   border-left: 4px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.rule-box:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .rule-box h6.text-success + p {
   color: #155724;
-}
-
-.rule-box h6.text-info + p {
-  color: #0c5460;
 }
 
 .rule-box h6.text-danger + p {
@@ -190,15 +200,15 @@
 
 /* Generation colors matching the game logic */
 .generation-0 {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: #3498db;
 }
 
 .generation-1 {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background:  #8bc34a;
 }
 
 .generation-2 {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background:  #ff9800;
 }
 
 .generation-3 {
@@ -231,7 +241,7 @@
   margin-bottom: 1.5rem;
   padding: 1rem;
   border-radius: 8px;
-  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  background: #F1F1F3;
   transition: all 0.3s ease;
 }
 
@@ -269,7 +279,7 @@
 }
 
 .tutorial-footer .btn-success {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background:#28a745;
   border: none;
 }
 

@@ -1,4 +1,4 @@
-const INSTRUMENT_NAMES = ["Synth", "AMSynth", "FMSynth"];
+const INSTRUMENT_NAMES = ["Synth", "AMSynth", "FMSynth"]; //
 
 const createEmptyGrid = (rows, cols) =>
   Array(rows)
