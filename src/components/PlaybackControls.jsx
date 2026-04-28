@@ -5,6 +5,8 @@ import { SCALES } from '../utils/audioEngine';
 const PlaybackControls = ({
   isPlaying,
   onStartStop,
+  isRecording,
+  onRecordToggle,
   bpm,
   onBpmChange,
   activeInstrument,
@@ -21,6 +23,16 @@ const PlaybackControls = ({
         size="sm"
       >
         {isPlaying ? "⏸︎ Parar" : "▶︎ Iniciar"}
+      </Button>
+
+      <Button
+        variant={isRecording ? "danger" : "success"}
+        onClick={onRecordToggle}
+        className="w-100 mb-2"
+        size="sm"
+        disabled={!isPlaying && !isRecording}
+      >
+        {isRecording ? "⏹ Detener Grabación" : "⏺ Grabar"}
       </Button>
 
       <Form.Group controlId="bpm-slider" className="mb-3">

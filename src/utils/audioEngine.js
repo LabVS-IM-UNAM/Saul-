@@ -43,17 +43,22 @@ class AudioEngine {
     this.hasCompletedFirstLoop = false;
     this.currentStepIndex = 0;
     this.pausedStep = 0;
+    this.recorder = null;
+    this.isRecording = false;
   }
 
   initialize() {
     if (this.isInitialized) return;
-    
+
     this.synths = {
       Synth: POLYSYNTH_INSTRUMENTS["Synth"](),
       AMSynth: POLYSYNTH_INSTRUMENTS["AMSynth"](),
       FMSynth: POLYSYNTH_INSTRUMENTS["FMSynth"](),
     };
-    
+
+    this.recorder = new Tone.Recorder();
+    Tone.getDestination().connect(this.recorder);
+
     this.isInitialized = true;
   }
 
@@ -144,17 +149,46 @@ class AudioEngine {
     this.hasCompletedFirstLoop = false;
   }
 
+  async startRecording() {
+    if (!this.recorder) {
+      this.initialize();
+    }
+    this.isRecording = true;
+    this.recorder.start();
+  }
+
+  async stopRecording() {
+    if (this.recorder && this.isRecording) {
+      const recording = await this.recorder.stop();
+      this.isRecording = false;
+      return recording;
+    }
+    return null;
+  }
+
+  downloadRecording(blob, filename = "grabacion.webm") {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.download = filename;
+    anchor.href = url;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   dispose() {
     this.sequence?.dispose();
+    this.recorder?.dispose();
     Object.values(this.synths ?? {}).forEach((synth) =>
       synth.dispose(),
     );
     this.synths = {};
     this.sequence = null;
+    this.recorder = null;
     this.isInitialized = false;
     this.hasCompletedFirstLoop = false;
     this.currentStepIndex = 0;
     this.pausedStep = 0;
+    this.isRecording = false;
   }
 }
 

@@ -25,6 +25,7 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [savedState, setSavedState] = useState(null);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
 
   const audioEngineRef = useRef(new AudioEngine());
   const gridRef = useRef(grid);
@@ -64,6 +65,22 @@ function App() {
     } else {
       await audioEngineRef.current.start();
       setIsPlaying(true);
+    }
+  };
+
+  const handleRecordToggle = async () => {
+    if (isRecording) {
+      const blob = await audioEngineRef.current.stopRecording();
+      setIsRecording(false);
+
+      if (blob) {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        const filename = `juego-vida-${timestamp}.webm`;
+        audioEngineRef.current.downloadRecording(blob, filename);
+      }
+    } else {
+      await audioEngineRef.current.startRecording();
+      setIsRecording(true);
     }
   };
 
@@ -173,6 +190,8 @@ function App() {
                   <PlaybackControls
                     isPlaying={isPlaying}
                     onStartStop={handleStartStop}
+                    isRecording={isRecording}
+                    onRecordToggle={handleRecordToggle}
                     bpm={bpm}
                     onBpmChange={(e) => setBpm(parseInt(e.target.value, 10))}
                     activeInstrument={activeInstrument}
