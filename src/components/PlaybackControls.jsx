@@ -1,5 +1,4 @@
 import { Form, Button } from 'react-bootstrap';
-import { INSTRUMENT_NAMES } from '../utils/gameLogic';
 import { SCALES } from '../utils/audioEngine';
 
 const PlaybackControls = ({
@@ -9,8 +8,6 @@ const PlaybackControls = ({
   onRecordToggle,
   bpm,
   onBpmChange,
-  activeInstrument,
-  onInstrumentChange,
   activeScale,
   onScaleChange
 }) => {
@@ -46,18 +43,6 @@ const PlaybackControls = ({
         />
       </Form.Group>
 
-      <Form.Group controlId="instrument-select" className="mb-2">
-        <Form.Label column={"sm"} className="small">Instrumento</Form.Label>
-        <Form.Select 
-          value={activeInstrument} 
-          onChange={onInstrumentChange}
-          size="sm"
-        >
-          {INSTRUMENT_NAMES.map((name) => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-        </Form.Select>
-      </Form.Group>
 
       <Form.Group controlId="scale-select" className="mb-3">
         <Form.Label column={"sm"} className="small">Escala</Form.Label>
