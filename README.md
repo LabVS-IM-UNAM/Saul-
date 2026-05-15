@@ -1,22 +1,41 @@
 # Saul-Juego de la Vida, Jhon Conway
-**Proyecto de Servicio Social de Saúl López Castillo**
+
+**Proyecto de Servicio Social de Filiberto López Castillo**
 
 Laboratorio de Visualización y Sonorización de Matemáticas del Insituto de Matemáticas de la UNAM
 
-# React + Vite
+## Ejecutar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Requisitos Previos**
 
-Currently, two official plugins are available:
+- **Node.js**
+- **npm** (incluido con Node.js)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Instalación**
 
-## Expanding the ESLint configuration
+1. Clona o descarga el proyecto
+2. Navega al directorio del proyecto:
+   ```bash
+   cd Saul-
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Modo Desarrollo**
+Para ejecutar el servidor de desarrollo y trabajar en el proyecto:
 
+```bash
+npm run dev
+```
 
--Lista de mejoras
-Castas de colores
-Colores en base a los ciclos, 
+Esto iniciará el servidor en `http://localhost:5173` y permitirá ver los cambios en tiempo real.
+
+### Stack Tecnológico
+
+- **React** 19.1.0 - Biblioteca de interfaz de usuario
+- **Vite** 6.3.5 - Herramienta de construcción y servidor de desarrollo
+- **React Bootstrap** 2.10.10 - Componentes de interfaz
+- **Tone.js** 15.1.22 - Procesamiento de audio
+- **Bootstrap** 5.3.7 - Estilos CSS
