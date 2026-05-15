@@ -62,7 +62,7 @@ class AudioEngine {
     this.isInitialized = true;
   }
 
-  createSequence(activeScale, numRows, numCols, gridRef, setCurrentStep, setGrid, nextGeneration) {
+  createSequence(activeScale, numRows, numCols, gridRef, setCurrentStep, setGrid, nextGeneration, isLoopingRef) {
     // Preservar estados antes de dispose
     const preservedHasCompletedFirstLoop = this.hasCompletedFirstLoop;
     const preservedPausedStep = this.pausedStep;
@@ -82,7 +82,7 @@ class AudioEngine {
         setCurrentStep(stepIndex);
         
         // Solo evolucionar cuando completamos un ciclo completo (llegamos al paso 0 después de haber pasado por todos los pasos)
-        if (stepIndex === 0 && this.hasCompletedFirstLoop) {
+        if (stepIndex === 0 && this.hasCompletedFirstLoop && !isLoopingRef?.current) {
           setGrid((currentGrid) =>
             nextGeneration(currentGrid, numRows, numCols),
           );

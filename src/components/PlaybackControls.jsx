@@ -6,6 +6,8 @@ const PlaybackControls = ({
   onStartStop,
   isRecording,
   onRecordToggle,
+  isLooping,
+  onLoopToggle,
   bpm,
   onBpmChange,
   activeScale,
@@ -30,6 +32,15 @@ const PlaybackControls = ({
         disabled={!isPlaying && !isRecording}
       >
         {isRecording ? "⏹ Detener Grabación" : "⏺ Grabar"}
+      </Button>
+
+      <Button
+        variant={isLooping ? "info" : "outline-info"}
+        onClick={onLoopToggle}
+        className="w-100 mb-2"
+        size="sm"
+      >
+        {isLooping ? "🔁 Loop activo" : "🔁 Loop"}
       </Button>
 
       <Form.Group controlId="bpm-slider" className="mb-3">

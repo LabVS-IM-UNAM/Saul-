@@ -26,9 +26,15 @@ function App() {
   const [savedState, setSavedState] = useState(null);
   const [showTutorial, setShowTutorial] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
 
   const audioEngineRef = useRef(new AudioEngine());
   const gridRef = useRef(grid);
+  const isLoopingRef = useRef(isLooping);
+
+  useEffect(() => {
+    isLoopingRef.current = isLooping;
+  }, [isLooping]);
 
   useEffect(() => {
     audioEngineRef.current.setBPM(bpm);
@@ -50,7 +56,8 @@ function App() {
       gridRef,
       setCurrentStep,
       setGrid,
-      nextGeneration
+      nextGeneration,
+      isLoopingRef
     );
 
     return () => {
@@ -192,6 +199,8 @@ function App() {
                     onStartStop={handleStartStop}
                     isRecording={isRecording}
                     onRecordToggle={handleRecordToggle}
+                    isLooping={isLooping}
+                    onLoopToggle={() => setIsLooping((v) => !v)}
                     bpm={bpm}
                     onBpmChange={(e) => setBpm(parseInt(e.target.value, 10))}
                     activeInstrument={activeInstrument}
