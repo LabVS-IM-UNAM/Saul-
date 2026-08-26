@@ -40,7 +40,6 @@ class AudioEngine {
     this.synths = {};
     this.sequence = null;
     this.isInitialized = false;
-    this.hasCompletedFirstLoop = false;
     this.currentStepIndex = 0;
     this.pausedStep = 0;
     this.recorder = null;
@@ -62,16 +61,14 @@ class AudioEngine {
     this.isInitialized = true;
   }
 
-  createSequence(activeScale, numRows, numCols, gridRef, setCurrentStep, setGrid, nextGeneration, isLoopingRef) {
-    // Preservar estados antes de dispose
-    const preservedHasCompletedFirstLoop = this.hasCompletedFirstLoop;
+  createSequence(activeScale, numRows, numCols, getGrid, onStep) {
+    // Preservar el paso pausado antes de dispose
     const preservedPausedStep = this.pausedStep;
-    
+
     this.dispose();
     this.initialize();
-    
-    // Restaurar estados preservados
-    this.hasCompletedFirstLoop = preservedHasCompletedFirstLoop;
+
+    // Restaurar estado preservado
     this.currentStepIndex = preservedPausedStep;
 
     const currentScaleNotes = generateScaleNotes(SCALES[activeScale], numRows);
@@ -79,21 +76,9 @@ class AudioEngine {
     this.sequence = new Tone.Sequence(
       (time, stepIndex) => {
         this.currentStepIndex = stepIndex;
-        setCurrentStep(stepIndex);
-        
-        // Solo evolucionar cuando completamos un ciclo completo (llegamos al paso 0 después de haber pasado por todos los pasos)
-        if (stepIndex === 0 && this.hasCompletedFirstLoop && !isLoopingRef?.current) {
-          setGrid((currentGrid) =>
-            nextGeneration(currentGrid, numRows, numCols),
-          );
-        }
-        
-        // Marcar que completamos el primer ciclo cuando llegamos al último paso
-        if (stepIndex === numCols - 1) {
-          this.hasCompletedFirstLoop = true;
-        }
+        onStep?.(stepIndex);
 
-        const currentGrid = gridRef.current;
+        const currentGrid = getGrid();
 
         for (let row = 0; row < numRows; row++) {
           const cellData = currentGrid[row][stepIndex];
@@ -146,7 +131,6 @@ class AudioEngine {
   resetPosition() {
     this.pausedStep = 0;
     this.currentStepIndex = 0;
-    this.hasCompletedFirstLoop = false;
   }
 
   async startRecording() {
@@ -166,15 +150,6 @@ class AudioEngine {
     return null;
   }
 
-  downloadRecording(blob, filename = "grabacion.webm") {
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.download = filename;
-    anchor.href = url;
-    anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
   dispose() {
     this.sequence?.dispose();
     this.recorder?.dispose();
@@ -185,7 +160,6 @@ class AudioEngine {
     this.sequence = null;
     this.recorder = null;
     this.isInitialized = false;
-    this.hasCompletedFirstLoop = false;
     this.currentStepIndex = 0;
     this.pausedStep = 0;
     this.isRecording = false;

@@ -13,6 +13,7 @@ import TutorialBanner from "./components/TutorialBanner";
 // Utils
 import { createEmptyGrid, nextGeneration, randomizeGrid } from "./utils/gameLogic";
 import { AudioEngine } from "./utils/audioEngine";
+import { downloadBlob } from "./utils/download";
 
 function App() {
   const [numRows, setNumRows] = useState(8);
@@ -31,6 +32,7 @@ function App() {
   const audioEngineRef = useRef(new AudioEngine());
   const gridRef = useRef(grid);
   const isLoopingRef = useRef(isLooping);
+  const hasCompletedFirstLoopRef = useRef(false);
 
   useEffect(() => {
     isLoopingRef.current = isLooping;
@@ -49,15 +51,26 @@ function App() {
   }, [numRows, numCols]);
 
   useEffect(() => {
+    const handleStep = (stepIndex) => {
+      setCurrentStep(stepIndex);
+
+      // Solo evolucionar cuando completamos un ciclo completo (llegamos al paso 0 después de haber pasado por todos los pasos)
+      if (stepIndex === 0 && hasCompletedFirstLoopRef.current && !isLoopingRef.current) {
+        setGrid((currentGrid) => nextGeneration(currentGrid, numRows, numCols));
+      }
+
+      // Marcar que completamos el primer ciclo cuando llegamos al último paso
+      if (stepIndex === numCols - 1) {
+        hasCompletedFirstLoopRef.current = true;
+      }
+    };
+
     audioEngineRef.current.createSequence(
       activeScale,
       numRows,
       numCols,
-      gridRef,
-      setCurrentStep,
-      setGrid,
-      nextGeneration,
-      isLoopingRef
+      () => gridRef.current,
+      handleStep,
     );
 
     return () => {
@@ -83,7 +96,7 @@ function App() {
       if (blob) {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
         const filename = `juego-vida-${timestamp}.webm`;
-        audioEngineRef.current.downloadRecording(blob, filename);
+        downloadBlob(blob, filename);
       }
     } else {
       await audioEngineRef.current.startRecording();
@@ -113,12 +126,14 @@ function App() {
     setGrid(createEmptyGrid(numRows, numCols));
     setSavedState(null);
     audioEngineRef.current.resetPosition();
+    hasCompletedFirstLoopRef.current = false;
     setCurrentStep(0);
   };
 
   const handleRandomizeGrid = () => {
     setGrid(randomizeGrid(numRows, numCols));
     audioEngineRef.current.resetPosition();
+    hasCompletedFirstLoopRef.current = false;
     setCurrentStep(0);
   };
 
@@ -142,6 +157,7 @@ function App() {
       setActiveScale(savedState.activeScale);
       setBpm(savedState.bpm);
       audioEngineRef.current.resetPosition();
+      hasCompletedFirstLoopRef.current = false;
       setCurrentStep(0);
     }
   };

@@ -27,6 +27,14 @@ body {
   padding: 1rem;
 }
 
+/* Contenedor con desplazamiento horizontal para el Grid en móviles */
+.grid-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+}
+
 /* Contenedor principal del Grid */
 .grid {
   display: grid;
@@ -39,11 +47,15 @@ body {
   gap: 2px; /* ANTES: 5px, AHORA: 8px */
   margin: 10px 0;
   background-color: #f9f9f9;
+  min-width: max-content; /* Evita que las celdas se aplasten en pantallas pequeñas */
+  touch-action: none; /* Previene el scroll de la página al dibujar con el dedo */
 }
 
 /* Estilo para cada celda individual */
 .grid-cell {
   width: 100%;
+  min-width: 28px;
+  min-height: 28px;
   aspect-ratio: 1 / 1;
   background-color: #e0e0e0;
   border: 1px solid #dcdcdc;
