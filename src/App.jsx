@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import React from 'react';
 import "./App.css";
 
-import {Container, Card, Row, Col, Stack, Button} from 'react-bootstrap';
+import {Container, Card, Row, Col, Stack, Button, Collapse} from 'react-bootstrap';
 
 // Componentes
 import Grid from "./components/Grid";
 import PlaybackControls from "./components/PlaybackControls";
+import MobileTransportBar from "./components/MobileTransportBar";
 import GridConfiguration from "./components/GridConfiguration";
 import TutorialBanner from "./components/TutorialBanner";
 
@@ -28,6 +29,7 @@ function App() {
   const [showTutorial, setShowTutorial] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
+  const [showMobileConfig, setShowMobileConfig] = useState(false);
 
   const audioEngineRef = useRef(new AudioEngine());
   const gridRef = useRef(grid);
@@ -41,6 +43,11 @@ function App() {
   useEffect(() => {
     audioEngineRef.current.setBPM(bpm);
   }, [bpm]);
+
+  useEffect(() => {
+    document.body.classList.toggle("scroll-locked", isPlaying);
+    return () => document.body.classList.remove("scroll-locked");
+  }, [isPlaying]);
 
   useEffect(() => {
     gridRef.current = grid;
@@ -170,11 +177,17 @@ function App() {
   };
   const gridStyles = {
     gridTemplateColumns: `repeat(${numCols}, 1fr)`,
+    gridTemplateRows: `repeat(${numRows}, 1fr)`,
     gap: "2px",
   };
 
   return (
-    <Container className="my-4">
+    <>
+      <div className="rotate-overlay">
+        <span>🔄</span>
+        <p>Gira tu dispositivo para jugar</p>
+      </div>
+    <Container fluid className="my-4 app-shell">
       <Card>
         <Card.Body>
           <div className="d-flex justify-content-between align-items-start mb-3">
@@ -194,9 +207,9 @@ function App() {
             </Button>
           </div>
 
-          <Row className="g-3">
-            <Col lg={9}>
-              <div className="mb-3">
+          <Row className="g-3 grid-area-row">
+            <Col lg={9} className="grid-area-col">
+              <div className="mb-3 grid-area-wrapper">
                 <Grid
                   grid={grid}
                   onCellClick={handleCellClick}
@@ -206,7 +219,7 @@ function App() {
               </div>
             </Col>
 
-            <Col lg={3}>
+            <Col lg={3} className="d-none d-lg-block">
               <div className="h-100">
                 <h5 className="mb-3">Controles</h5>
                 <Stack gap={3}>
@@ -224,7 +237,7 @@ function App() {
                     activeScale={activeScale}
                     onScaleChange={(e) => setActiveScale(e.target.value)}
                   />
-                  
+
                   <GridConfiguration
                     numRows={numRows}
                     numCols={numCols}
@@ -240,14 +253,67 @@ function App() {
               </div>
             </Col>
           </Row>
+
+          <div className="d-lg-none">
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              className="w-100 mb-2"
+              onClick={() => setShowMobileConfig((v) => !v)}
+              aria-expanded={showMobileConfig}
+            >
+              ⚙ Configuración {showMobileConfig ? "▲" : "▼"}
+            </Button>
+            <Collapse in={showMobileConfig}>
+              <div>
+                <Stack gap={3} className="mb-2">
+                  <PlaybackControls
+                    isPlaying={isPlaying}
+                    onStartStop={handleStartStop}
+                    isRecording={isRecording}
+                    onRecordToggle={handleRecordToggle}
+                    isLooping={isLooping}
+                    onLoopToggle={() => setIsLooping((v) => !v)}
+                    bpm={bpm}
+                    onBpmChange={(e) => setBpm(parseInt(e.target.value, 10))}
+                    activeScale={activeScale}
+                    onScaleChange={(e) => setActiveScale(e.target.value)}
+                    showTransportButtons={false}
+                  />
+
+                  <GridConfiguration
+                    numRows={numRows}
+                    numCols={numCols}
+                    onRowsChange={handleDimensionChange(setNumRows)}
+                    onColsChange={handleDimensionChange(setNumCols)}
+                    onClear={clearGrid}
+                    onRandomize={handleRandomizeGrid}
+                    savedState={savedState}
+                    onSaveInitialState={handleSaveInitialState}
+                    onRestoreSavedState={handleRestoreSavedState}
+                  />
+                </Stack>
+              </div>
+            </Collapse>
+          </div>
         </Card.Body>
       </Card>
-      
-      <TutorialBanner 
-        show={showTutorial} 
-        onHide={() => setShowTutorial(false)} 
+
+      <MobileTransportBar
+        isPlaying={isPlaying}
+        onStartStop={handleStartStop}
+        isRecording={isRecording}
+        onRecordToggle={handleRecordToggle}
+        isLooping={isLooping}
+        onLoopToggle={() => setIsLooping((v) => !v)}
+      />
+
+      <TutorialBanner
+        show={showTutorial}
+        onHide={() => setShowTutorial(false)}
       />
     </Container>
+    </>
   );
 }
 

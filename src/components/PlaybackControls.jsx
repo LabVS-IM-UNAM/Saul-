@@ -11,37 +11,43 @@ const PlaybackControls = ({
   bpm,
   onBpmChange,
   activeScale,
-  onScaleChange
+  onScaleChange,
+  showTransportButtons = true
 }) => {
   return (
     <div>
-      <Button
-        variant={isPlaying ? "warning" : "primary"}
-        onClick={onStartStop}
-        className="w-100 mb-2"
-        size="sm"
-      >
-        {isPlaying ? "⏸︎ Parar" : "▶︎ Iniciar"}
-      </Button>
+      {showTransportButtons && (
+        <>
+          <Button
+            variant={isPlaying ? "warning" : "primary"}
+            onClick={onStartStop}
+            className="w-100 mb-2"
+            size="sm"
+          >
+            {isPlaying ? "⏸︎ Parar" : "▶︎ Iniciar"}
+          </Button>
 
-      <Button
-        variant={isRecording ? "danger" : "success"}
-        onClick={onRecordToggle}
-        className="w-100 mb-2"
-        size="sm"
-        disabled={!isPlaying && !isRecording}
-      >
-        {isRecording ? "⏹ Detener Grabación" : "⏺ Grabar"}
-      </Button>
+          <Button
+            variant={isRecording ? "danger" : "success"}
+            onClick={onRecordToggle}
+            className="w-100 mb-2"
+            size="sm"
+            disabled={!isPlaying && !isRecording}
+          >
+            {isRecording ? "⏹ Detener Grabación" : "⏺ Grabar"}
+          </Button>
 
-      <Button
-        variant={isLooping ? "info" : "outline-info"}
-        onClick={onLoopToggle}
-        className="w-100 mb-2"
-        size="sm"
-      >
-        {isLooping ? "🔁 Loop activo" : "🔁 Loop"}
-      </Button>
+          <Button
+            variant={isLooping ? "info" : "outline-info"}
+            onClick={onLoopToggle}
+            className={`w-100 mb-2 ${isLooping ? "loop-active" : ""}`}
+            size="sm"
+          >
+            <span className="loop-icon">🔁</span>
+            {isLooping ? " Loop activo" : " Loop"}
+          </Button>
+        </>
+      )}
 
       <Form.Group controlId="bpm-slider" className="mb-3">
         <Form.Label column={"sm"} className="small">Tempo: {bpm} BPM</Form.Label>

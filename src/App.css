@@ -27,12 +27,129 @@ body {
   padding: 1rem;
 }
 
+/* Bloqueo de scroll mientras se reproduce */
+body.scroll-locked {
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Barra de transporte fija (solo se renderiza <lg vía d-lg-none) */
+.mobile-transport-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background-color: #282c34;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-transport-bar .btn {
+  flex: 1;
+  font-size: 1.25rem;
+}
+
+/* Espacio para que el contenido no quede tapado por la barra fija */
+@media (max-width: 991.98px) {
+  .app-shell {
+    padding-bottom: 72px;
+  }
+}
+
+/* Overlay "gira tu dispositivo": solo en teléfonos (<768px).
+   Las tabletas quedan exentas: son usables en vertical. */
+.rotate-overlay {
+  display: none;
+}
+
+@media (max-width: 767.98px) and (orientation: portrait) {
+  .rotate-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem;
+    background-color: #282c34;
+    color: white;
+  }
+
+  .rotate-overlay span {
+    font-size: 3rem;
+  }
+}
+
+/* Animación del botón de loop: el icono gira mientras el loop está activo */
+.loop-icon {
+  display: inline-block;
+}
+
+.loop-active .loop-icon {
+  animation: loop-spin 1.4s linear infinite;
+}
+
+@keyframes loop-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop-active .loop-icon {
+    animation: none;
+  }
+}
+
+/* Cadena flex que deja al grid absorber el espacio sobrante de la pantalla */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell > .card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell > .card > .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.grid-area-row {
+  flex: 1;
+  min-height: 0;
+}
+
+.grid-area-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.grid-area-wrapper {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
 /* Contenedor con desplazamiento horizontal para el Grid en móviles */
 .grid-scroll-container {
   width: 100%;
   overflow-x: auto;
   padding-bottom: 10px;
   -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  display: flex;
 }
 
 /* Contenedor principal del Grid */
@@ -49,6 +166,7 @@ body {
   background-color: #f9f9f9;
   min-width: max-content; /* Evita que las celdas se aplasten en pantallas pequeñas */
   touch-action: none; /* Previene el scroll de la página al dibujar con el dedo */
+  flex: 1; /* Crece para llenar el alto y ancho disponibles */
 }
 
 /* Estilo para cada celda individual */
@@ -56,7 +174,6 @@ body {
   width: 100%;
   min-width: 28px;
   min-height: 28px;
-  aspect-ratio: 1 / 1;
   background-color: #e0e0e0;
   border: 1px solid #dcdcdc;
   /* CAMBIO: También reducimos el borde de las celdas para que coincida */
