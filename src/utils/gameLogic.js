@@ -1,5 +1,10 @@
 const INSTRUMENT_NAMES = ["Synth", "AMSynth", "FMSynth"]; //
 
+const MIN_ROWS = 1;
+const MAX_ROWS = 16;
+const MIN_COLS = 1;
+const MAX_COLS = 32;
+
 const createEmptyGrid = (rows, cols) =>
   Array(rows)
     .fill()
@@ -82,6 +87,10 @@ const randomizeGrid = (rows, cols) => {
 
 export {
   INSTRUMENT_NAMES,
+  MIN_ROWS,
+  MAX_ROWS,
+  MIN_COLS,
+  MAX_COLS,
   createEmptyGrid,
   countNeighbors,
   nextGeneration,

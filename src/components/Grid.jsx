@@ -1,63 +1,36 @@
 // src/components/Grid.jsx
 
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 function Grid({ grid, onCellClick, style, currentStep }) {
+  const isPointerDownRef = useRef(false);
+
   if (!Array.isArray(grid)) return null;
 
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const gridRef = useRef(null);
-  const lastTouchedCellRef = useRef(null);
-
-  const handleMouseDown = (rowIndex, colIndex) => {
-    setIsMouseDown(true);
+  const handlePointerDown = (e, rowIndex, colIndex) => {
+    isPointerDownRef.current = true;
     onCellClick(rowIndex, colIndex);
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
-  const handleMouseUp = () => {
-    setIsMouseDown(false);
-    lastTouchedCellRef.current = null;
-  };
-
-  const handleMouseEnter = (rowIndex, colIndex) => {
-    if (isMouseDown) {
+  const handlePointerEnter = (rowIndex, colIndex) => {
+    if (isPointerDownRef.current) {
       onCellClick(rowIndex, colIndex);
     }
   };
 
-  const handleTouchStart = (rowIndex, colIndex) => {
-    lastTouchedCellRef.current = `${rowIndex}-${colIndex}`;
-    handleMouseDown(rowIndex, colIndex);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isMouseDown) return;
-    const touch = e.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
-
-    if (element && element.classList.contains("grid-cell")) {
-      const row = parseInt(element.getAttribute("data-row"), 10);
-      const col = parseInt(element.getAttribute("data-col"), 10);
-      const cellKey = `${row}-${col}`;
-
-      if (cellKey !== lastTouchedCellRef.current) {
-        lastTouchedCellRef.current = cellKey;
-        onCellClick(row, col);
-      }
-    }
+  const endPointerInteraction = () => {
+    isPointerDownRef.current = false;
   };
 
   return (
     <div className="grid-scroll-container">
       <div
         className="grid"
-        style={{...style, userSelect: 'none'}}
-        ref={gridRef}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchEnd={handleMouseUp}
-        onTouchCancel={handleMouseUp}
-        onTouchMove={handleTouchMove}
+        style={{ ...style, userSelect: "none" }}
+        onPointerUp={endPointerInteraction}
+        onPointerCancel={endPointerInteraction}
+        onPointerLeave={endPointerInteraction}
       >
         {grid.map((row, rowIndex) =>
           row.map((cellValue, colIndex) => {
@@ -75,9 +48,8 @@ function Grid({ grid, onCellClick, style, currentStep }) {
                   ${isActiveStep ? "active-step" : ""}`}
                 data-row={rowIndex}
                 data-col={colIndex}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                onTouchStart={() => handleTouchStart(rowIndex, colIndex)}
+                onPointerDown={(e) => handlePointerDown(e, rowIndex, colIndex)}
+                onPointerEnter={() => handlePointerEnter(rowIndex, colIndex)}
                 title={instrument ? `Instrumento: ${instrument} (Gen: ${generation})` : "Celda vacía"}
               />
             );

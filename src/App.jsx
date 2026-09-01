@@ -12,7 +12,15 @@ import GridConfiguration from "./components/GridConfiguration";
 import TutorialBanner from "./components/TutorialBanner";
 
 // Utils
-import { createEmptyGrid, nextGeneration, randomizeGrid } from "./utils/gameLogic";
+import {
+  createEmptyGrid,
+  nextGeneration,
+  randomizeGrid,
+  MIN_ROWS,
+  MAX_ROWS,
+  MIN_COLS,
+  MAX_COLS,
+} from "./utils/gameLogic";
 import { AudioEngine } from "./utils/audioEngine";
 import { downloadBlob } from "./utils/download";
 
@@ -169,15 +177,19 @@ function App() {
     }
   };
 
-  const handleDimensionChange = (setter) => (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value > 0) {
-      setter(value);
-    }
+  const clampDimension = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const handleRowsCommit = (value) => {
+    setNumRows(clampDimension(value, MIN_ROWS, MAX_ROWS));
   };
+
+  const handleColsCommit = (value) => {
+    setNumCols(clampDimension(value, MIN_COLS, MAX_COLS));
+  };
+
   const gridStyles = {
-    gridTemplateColumns: `repeat(${numCols}, 1fr)`,
-    gridTemplateRows: `repeat(${numRows}, 1fr)`,
+    gridTemplateColumns: `repeat(${numCols}, var(--cell-size))`,
+    gridTemplateRows: `repeat(${numRows}, var(--cell-size))`,
     gap: "2px",
   };
 
@@ -241,8 +253,8 @@ function App() {
                   <GridConfiguration
                     numRows={numRows}
                     numCols={numCols}
-                    onRowsChange={handleDimensionChange(setNumRows)}
-                    onColsChange={handleDimensionChange(setNumCols)}
+                    onRowsCommit={handleRowsCommit}
+                    onColsCommit={handleColsCommit}
                     onClear={clearGrid}
                     onRandomize={handleRandomizeGrid}
                     savedState={savedState}
@@ -284,8 +296,8 @@ function App() {
                   <GridConfiguration
                     numRows={numRows}
                     numCols={numCols}
-                    onRowsChange={handleDimensionChange(setNumRows)}
-                    onColsChange={handleDimensionChange(setNumCols)}
+                    onRowsCommit={handleRowsCommit}
+                    onColsCommit={handleColsCommit}
                     onClear={clearGrid}
                     onRandomize={handleRandomizeGrid}
                     savedState={savedState}

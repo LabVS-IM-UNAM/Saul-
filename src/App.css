@@ -86,24 +86,9 @@ body.scroll-locked {
   }
 }
 
-/* Animación del botón de loop: el icono gira mientras el loop está activo */
-.loop-icon {
-  display: inline-block;
-}
-
-.loop-active .loop-icon {
-  animation: loop-spin 1.4s linear infinite;
-}
-
-@keyframes loop-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loop-active .loop-icon {
-    animation: none;
-  }
+/* Botón de bucle: solo transición de color, sin animación */
+.loop-btn {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Cadena flex que deja al grid absorber el espacio sobrante de la pantalla */
@@ -143,10 +128,11 @@ body.scroll-locked {
   min-height: 0;
 }
 
-/* Contenedor con desplazamiento horizontal para el Grid en móviles */
+/* Contenedor con desplazamiento horizontal/vertical para el Grid en móviles */
 .grid-scroll-container {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
   padding-bottom: 10px;
   -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
   display: flex;
@@ -154,8 +140,8 @@ body.scroll-locked {
 
 /* Contenedor principal del Grid */
 .grid {
+  --cell-size: 36px;
   display: grid;
-  /* grid-template-columns: repeat(16, 1fr);*/
   border: 1px solid #ccc;
   /* CAMBIO: Bordes menos redondeados */
   border-radius: 1px; /* ANTES: 8px, AHORA: 4px. Pon 0px si quieres esquinas perfectas. */
@@ -166,14 +152,19 @@ body.scroll-locked {
   background-color: #f9f9f9;
   min-width: max-content; /* Evita que las celdas se aplasten en pantallas pequeñas */
   touch-action: none; /* Previene el scroll de la página al dibujar con el dedo */
-  flex: 1; /* Crece para llenar el alto y ancho disponibles */
+}
+
+@media (min-width: 992px) {
+  .grid {
+    --cell-size: 40px;
+  }
 }
 
 /* Estilo para cada celda individual */
 .grid-cell {
-  width: 100%;
-  min-width: 28px;
-  min-height: 28px;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  aspect-ratio: 1 / 1;
   background-color: #e0e0e0;
   border: 1px solid #dcdcdc;
   /* CAMBIO: También reducimos el borde de las celdas para que coincida */

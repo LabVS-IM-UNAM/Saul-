@@ -30,10 +30,10 @@ const MobileTransportBar = ({
       <Button
         variant={isLooping ? "info" : "outline-info"}
         onClick={onLoopToggle}
-        className={isLooping ? "loop-active" : ""}
+        className="loop-btn"
         aria-label={isLooping ? "Loop activo" : "Loop"}
       >
-        <span className="loop-icon">🔁</span>
+        🔁
       </Button>
     </div>
   );

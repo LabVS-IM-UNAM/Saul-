@@ -40,11 +40,10 @@ const PlaybackControls = ({
           <Button
             variant={isLooping ? "info" : "outline-info"}
             onClick={onLoopToggle}
-            className={`w-100 mb-2 ${isLooping ? "loop-active" : ""}`}
+            className="w-100 mb-2 loop-btn"
             size="sm"
           >
-            <span className="loop-icon">🔁</span>
-            {isLooping ? " Loop activo" : " Loop"}
+            🔁 {isLooping ? "Bucle activo" : "Bucle"}
           </Button>
         </>
       )}
@@ -63,8 +62,8 @@ const PlaybackControls = ({
 
       <Form.Group controlId="scale-select" className="mb-3">
         <Form.Label column={"sm"} className="small">Escala</Form.Label>
-        <Form.Select 
-          value={activeScale} 
+        <Form.Select
+          value={activeScale}
           onChange={onScaleChange}
           size="sm"
         >
